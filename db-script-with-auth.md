@@ -1,4 +1,4 @@
-`` DROP SCHEMA IF EXISTS `music-room-reservation`;
+``` DROP SCHEMA IF EXISTS `music-room-reservation`;
 
 CREATE SCHEMA `music-room-reservation`;
 
@@ -101,4 +101,4 @@ INSERT INTO reservation (phoneNumber, date, timeSlotId, musicRoomId, userId) VAL
 ('2345678901', '2024-06-23', 2, 3, 1002),  -- User: jimmy.mc@cpu.ac.th, Time Slot: 10:30-12:20, Room: Percussion Paradise
 ('2345678901', '2024-06-23', 4, 12, 1002), -- User: jimmy.mc@cpu.ac.th, Time Slot: 08:30-10:20, Room: Echo Chamber
 ('3456789012', '2024-06-24', 3, 6, 1003),  -- User: lauren.mc@cpu.ac.th, Time Slot: 12:30-14:20, Room: Theory Throne
-('4567890123', '2024-06-25', 4, 9, 1001);  -- User: kobe.mc@cpu.ac.th, Time Slot: 14:30-16:20, Room: Recital Royale ``
+('4567890123', '2024-06-25', 4, 9, 1001);  -- User: kobe.mc@cpu.ac.th, Time Slot: 14:30-16:20, Room: Recital Royale ```
