@@ -7,10 +7,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @Service
 public class MusicRoomService {
     @Autowired
     private MusicRoomRepository musicRoomRepository;
+
+    public List<MusicRoom> getAllMusicRoom() {
+        return musicRoomRepository.findAll();
+    }
 
     public MusicRoom getMusicRoomById(Integer musicRoomId) {
         return musicRoomRepository.findById(musicRoomId).orElseThrow(
@@ -19,6 +25,7 @@ public class MusicRoomService {
                 )
         );
     }
+
 
 
 }
