@@ -1,4 +1,3 @@
-```
 DROP SCHEMA IF EXISTS `music_room_reservation`;
 
 CREATE SCHEMA `music_room_reservation`;
@@ -84,4 +83,13 @@ INSERT INTO music_room (status, name, floor, building, musicalInstrument, minCap
 INSERT INTO music_room (status, name, floor, building, musicalInstrument, minCapacity, maxCapacity, feature) VALUES
 ('available', 'Recital Royale', '4', 'D', 'Grand piano', 30, 100, 'Stage, seating for 100, sound and lighting system'),
 ('available', 'Concert Coliseum', '4', 'D', 'Multiple instruments for orchestra', 100, 500, 'Large stage, seating for 500, orchestra pit, advanced acoustics, sound and lighting system');
-```
+
+INSERT INTO time_slot (startTime, endTime) VALUES ('08:30:00', '10:20:00');
+INSERT INTO time_slot (startTime, endTime) VALUES ('10:30:00', '12:20:00');
+INSERT INTO time_slot (startTime, endTime) VALUES ('12:30:00', '14:20:00');
+INSERT INTO time_slot (startTime, endTime) VALUES ('14:30:00', '16:20:00');
+
+INSERT INTO reservation (phoneNumber, date, timeSlotId, musicRoomId, userId) VALUES 
+('1234567890', '2024-08-04', 1, 1, 1001),
+('0987654321', '2024-08-05', 2, 2, 1002),
+('1122334455', '2024-08-06', 3, 3, 1003);
