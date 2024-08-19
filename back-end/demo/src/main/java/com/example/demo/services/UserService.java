@@ -23,4 +23,6 @@ public class UserService {
                 () -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "User not found with id: " + userId));
     }
+
+
 }
