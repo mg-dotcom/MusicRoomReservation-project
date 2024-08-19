@@ -45,11 +45,29 @@ CREATE TABLE reservation (
 
 -- ---------------------------------------------------------------------
 -- Insert script
-INSERT INTO User (userId, email, password, is_admin) VALUES
-(1001, 'kobe.mc@cpu.ac.th', sha2('test1',224), false), 
-(1002, 'jimmy.mc@cpu.ac.th', sha2('test2',224), false), 
-(1003, 'lauren.mc@cpu.ac.th',sha2('test3',224), false), 
-(9999, 'peekie.mc@cpu.ac.th', sha2('test4',224), true); 
+CREATE TABLE `user` (
+    `oid` char(36) NOT NULL UNIQUE,
+    `name` varchar(100) NOT NULL,
+    `username` varchar(50) NOT NULL,
+    `email` varchar(50) NOT NULL,
+    `password` varchar(100) NOT NULL,
+    `role` enum('USER', 'ADMIN') NOT NULL DEFAULT 'USER',
+    PRIMARY KEY (`oid`)
+);
+
+INSERT INTO `user` (`oid`, `name`, `username`, `email`, `password`, `role`) 
+VALUES ('0712334f-4982-4d26-a7ef-4ad0ff53cb18', 'ITBKK PICHET', 'itbkk.pichet', 
+'itbkk.pichet@ad.sit.kmutt.ac.th', 
+'$argon2id$v=19$m=16384,t=2,p=1$aFNjdDg2S2hSWVg1OE9uaw$4dBU2LykSRgNJKL4s5IqHmIiQr+b3HDAn0xPruz6l8Y',
+ 'ADMIN');
+ INSERT INTO `user` (`oid`, `name`, `username`, `email`, `password`, `role`) 
+VALUES ('995a830b-6c62-45e6-ab89-1077dff55a72', 'ITBKK SIAM', 'itbkk.siam', 
+'itbkk.siam@ad.sit.kmutt.ac.th', 
+'$argon2id$v=19$m=16384,t=2,p=1$ZExDM1kxbTJmZllHMjBEZQ$dEDcThzMQkNx/J7bqN6klo73+/b+GzMj1st/UgbsTJg',
+ 'ADMIN');
+ INSERT INTO `user` (`oid`, `name`, `username`, `email`, `password`, `role`) 
+VALUES ('e12b6e98-7d1b-4b98-bb7d-56b7c5f84f1e', 'John Doe', 'john.doe', 
+'john.doe@example.com', 
 
 CREATE USER 'user'@'%' IDENTIFIED BY 'bm(B3hrkET';
 CREATE USER 'admin'@'localhost' IDENTIFIED BY 'GZ4ueQS*CM';
