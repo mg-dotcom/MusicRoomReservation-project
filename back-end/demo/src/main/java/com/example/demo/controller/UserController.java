@@ -1,15 +1,10 @@
 package com.example.demo.controller;
 
-import com.example.demo.entities.MusicRoom;
-import com.example.demo.entities.User;
-import com.example.demo.services.MusicRoomService;
+import com.example.demo.entities.user.User;
 import com.example.demo.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,4 +26,5 @@ public class UserController {
         User user = userService.getUserById(userId);
         return ResponseEntity.ok(user);
     }
+
 }
