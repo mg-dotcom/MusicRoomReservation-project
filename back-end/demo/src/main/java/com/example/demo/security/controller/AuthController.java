@@ -1,12 +1,9 @@
 package com.example.demo.security.controller;
 
-import com.example.demo.security.WebSecurityConfig;
 import com.example.demo.payload.request.LoginRequest;
 import com.example.demo.payload.response.AuthResponse;
-import com.example.demo.repositories.UserRepository;
 import com.example.demo.security.services.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

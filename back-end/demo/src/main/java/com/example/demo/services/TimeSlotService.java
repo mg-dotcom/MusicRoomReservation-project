@@ -2,7 +2,6 @@ package com.example.demo.services;
 
 import com.example.demo.entities.MusicRoom;
 import com.example.demo.entities.TimeSlot;
-import com.example.demo.repositories.MusicRoomRepository;
 import com.example.demo.repositories.TimeSlotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,8 +12,8 @@ import java.util.List;
 
 @Service
 public class TimeSlotService {
-    @Autowired
-    private TimeSlotRepository timeSlotRepository;
+   @Autowired
+   public TimeSlotRepository timeSlotRepository;
 
     public List<TimeSlot> getAllTimeSlot(){
         return timeSlotRepository.findAll();

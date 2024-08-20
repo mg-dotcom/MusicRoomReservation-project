@@ -1,22 +1,27 @@
 package com.example.demo.security.services;
 
+import com.example.demo.entities.user.User;
+import com.example.demo.entities.user.Role;
+import com.example.demo.repositories.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Service
 public class JwtService {
+    @Autowired
+    UserRepository userRepository;
+
     @Value("${security.jwt.secret-key}")
     private String secretKey;
 
@@ -32,19 +37,23 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
+
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+        Optional<User> user = userRepository.findByUsername(userDetails.getUsername());
+        Map<String, Object> claims = new LinkedHashMap<>();
+        claims.put("name", user.get().getName());
+        claims.put("oid", user.get().getOid());
+        claims.put("email", user.get().getEmail());
+        claims.put("role", user.get().getRole());
+        return doGenerateToken(claims);
     }
 
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails){
-        return Jwts
-                .builder()
-                .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
+    private String doGenerateToken(Map<String, Object> claims) {
+        return Jwts.builder().setHeaderParam("typ", "JWT")
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
-                .compact();
+                .setClaims(claims)
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256).compact();
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {

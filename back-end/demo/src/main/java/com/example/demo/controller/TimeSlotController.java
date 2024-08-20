@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.entities.TimeSlot;
-import com.example.demo.repositories.TimeSlotRepository;
 import com.example.demo.services.TimeSlotService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
