@@ -41,30 +41,11 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-//    public String generateToken(UserDetails userDetails) {
-//        Optional<User> user = userRepository.findByUsername(userDetails.getUsername());
-//
-//        // ใช้ LinkedHashMap เพื่อรักษาลำดับของ claims
-//        Map<String, Object> claims = new LinkedHashMap<>();
-//        claims.put("name", user.get().getName());
-//        claims.put("oid", user.get().getOid());
-//        claims.put("email", user.get().getEmail());
-//        claims.put("role", user.get().getRole());
-//
-//        // สร้าง JWT ด้วยการตั้งค่า issuer, issuedAt, และ expiration หลังจาก setClaims()
-//        return Jwts.builder()
-//                .setClaims(claims) // ตั้งค่า claims ทั้งหมดก่อน
-//                .setIssuer("https://intproj23.sit.kmutt.ac.th/ssi1/") // ตั้งค่า issuer
-//                .setIssuedAt(new Date(System.currentTimeMillis())) // ตั้งค่า issuedAt
-//                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration)) // ตั้งค่า expiration
-//                .signWith(getSignInKey(), SignatureAlgorithm.HS256) // ลงนามด้วยคีย์
-//                .compact();
-//    }
-
     public String generateToken(User user) {
-        Map<String, Object> claims = new HashMap<>();
+        Map<String, Object> claims = new LinkedHashMap<>();
         claims.put("iss", publicKey);
         claims.put("iat", new Date(System.currentTimeMillis()));
+        claims.put("exp", new Date(System.currentTimeMillis() + jwtExpiration));
         claims.put("name", user.getName());
         claims.put("oid", user.getOid());
         claims.put("email", user.getEmail());
@@ -75,7 +56,7 @@ public class JwtService {
     private String doGenerateToken(Map<String, Object> claims, String subject) {
         return Jwts.builder().setHeaderParam("typ", "JWT").setClaims(claims).setSubject(subject)
                 .setIssuedAt((Date) claims.get("iat"))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .setExpiration((Date) claims.get("exp"))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256).compact();
     }
 
