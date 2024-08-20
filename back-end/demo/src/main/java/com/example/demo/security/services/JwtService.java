@@ -8,6 +8,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +26,9 @@ public class JwtService {
     @Value("${security.jwt.secret-key}")
     private String secretKey;
 
+    @Value("${public.url}")
+    private String publicKey;
+
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
 
@@ -37,22 +41,41 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
+//    public String generateToken(UserDetails userDetails) {
+//        Optional<User> user = userRepository.findByUsername(userDetails.getUsername());
+//
+//        // ใช้ LinkedHashMap เพื่อรักษาลำดับของ claims
+//        Map<String, Object> claims = new LinkedHashMap<>();
+//        claims.put("name", user.get().getName());
+//        claims.put("oid", user.get().getOid());
+//        claims.put("email", user.get().getEmail());
+//        claims.put("role", user.get().getRole());
+//
+//        // สร้าง JWT ด้วยการตั้งค่า issuer, issuedAt, และ expiration หลังจาก setClaims()
+//        return Jwts.builder()
+//                .setClaims(claims) // ตั้งค่า claims ทั้งหมดก่อน
+//                .setIssuer("https://intproj23.sit.kmutt.ac.th/ssi1/") // ตั้งค่า issuer
+//                .setIssuedAt(new Date(System.currentTimeMillis())) // ตั้งค่า issuedAt
+//                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration)) // ตั้งค่า expiration
+//                .signWith(getSignInKey(), SignatureAlgorithm.HS256) // ลงนามด้วยคีย์
+//                .compact();
+//    }
 
-    public String generateToken(UserDetails userDetails) {
-        Optional<User> user = userRepository.findByUsername(userDetails.getUsername());
-        Map<String, Object> claims = new LinkedHashMap<>();
-        claims.put("name", user.get().getName());
-        claims.put("oid", user.get().getOid());
-        claims.put("email", user.get().getEmail());
-        claims.put("role", user.get().getRole());
-        return doGenerateToken(claims);
+    public String generateToken(User user) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("iss", publicKey);
+        claims.put("iat", new Date(System.currentTimeMillis()));
+        claims.put("name", user.getName());
+        claims.put("oid", user.getOid());
+        claims.put("email", user.getEmail());
+        claims.put("role", user.getRole());
+        return doGenerateToken(claims, user.getUsername());
     }
 
-    private String doGenerateToken(Map<String, Object> claims) {
-        return Jwts.builder().setHeaderParam("typ", "JWT")
-                .setIssuedAt(new Date(System.currentTimeMillis()))
+    private String doGenerateToken(Map<String, Object> claims, String subject) {
+        return Jwts.builder().setHeaderParam("typ", "JWT").setClaims(claims).setSubject(subject)
+                .setIssuedAt((Date) claims.get("iat"))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .setClaims(claims)
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256).compact();
     }
 
