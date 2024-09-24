@@ -7,7 +7,8 @@
         "building": "A",
         "instruments": ["Upright piano"],
         "capacity": { "min": 1, "max": 3 },
-        "features": ["Music stand", "Adjustable stool", "Soundproofing"]
+        "features": ["Music stand", "Adjustable stool", "Soundproofing"],
+        "imageUrl": "https://cdn.pixabay.com/photo/2016/11/18/15/54/apartment-1835482_1280.jpg"
       },
       {
         "roomId": "A102",

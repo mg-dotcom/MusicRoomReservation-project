@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRoomStore } from "@/stores/RoomStore";
-import { RouterView } from "vue-router";
+
 import SearchButton from "@/components/SearchButton.vue";
 import { capitalizeAndSpace } from "@/libsUtils.js";
 
@@ -13,16 +13,19 @@ onMounted(async () => {
   roomKeys.value = Object.keys(roomStore.getRooms).map((key) => {
     return {
       roomType: key,
+      rooms: roomStore.getRooms[key],
     };
   });
 });
+
+console.log(roomStore.getAllRooms);
 </script>
 
 <template>
   <div class="w-full px-14 py-11">
     <div class="section-filter">
-      <h1 class="text-2xl font-semibold">Room Reservation</h1>
-      <div class="filter flex my-2 justify-between">
+      <h1 class="text-3xl font-semibold">Room Reservation</h1>
+      <div class="filter flex my-4 justify-between">
         <div class="flex flex-col">
           <div class="select-filter flex space-x-3 w-full">
             <div class="filter-room font-medium">
@@ -107,7 +110,7 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div class="section-content flex gap-x-3 mt-11">
+    <div class="section-room-types flex gap-x-3 mt-14 text-xl">
       <div
         class="all-rooms px-7 py-3 font-semibold rounded-t-lg border-[1px] border-black bg-white"
       >
@@ -122,10 +125,54 @@ onMounted(async () => {
         {{ capitalizeAndSpace(roomKey.roomType) }}
       </div>
     </div>
+
     <div
-      class="h-screen bg-white rounded-b-lg rounded-e-lg border-[1px] border-black"
+      class="section-rooms h-screen bg-white rounded-b-lg rounded-e-lg border-[1px] border-black"
     >
-      <router-view />
+      <div
+        class="bg-white rounded-lg p-5 m-5 shadow-md mb-4 flex gap-x-5"
+        v-for="(room, index) in roomStore.getAllRooms"
+        :key="room.roomId"
+      >
+        <img
+          :src="room.imageUrl"
+          :alt="`Room ${room.roomId}: ${room.name}`"
+          class="w-96 rounded-lg mb-4"
+        />
+        <div>
+          <h3 class="text-xl font-bold mb-2">
+            {{ `Room ${room.roomId}: ${room.name}` }}
+          </h3>
+          <p class="text-gray-500 mb-4">
+            {{ `${room.capacity.min}-${room.capacity.max} people` }}
+          </p>
+
+          <div class="grid grid-cols-4 gap-2">
+            <div
+              v-for="time in [
+                '08:30 - 10:20',
+                '10:30 - 12:20',
+                '12:30 - 14:20',
+                '14:30 - 16:20',
+              ]"
+              :key="time"
+              class="bg-green-200 p-2 rounded-lg"
+            >
+              {{ time }}
+            </div>
+          </div>
+
+          <div class="grid grid-cols-4 gap-2 mt-4">
+            <button
+              v-for="(feature, index) in room.features"
+              :key="index"
+              class="bg-blue-500 text-white px-4 py-2 rounded-lg"
+            >
+              RESERVE
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>

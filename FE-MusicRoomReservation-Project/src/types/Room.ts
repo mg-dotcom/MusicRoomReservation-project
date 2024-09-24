@@ -8,4 +8,5 @@ interface Room {
     max: number;
   };
   features: string[];
+  imageUrl?: string;
 }

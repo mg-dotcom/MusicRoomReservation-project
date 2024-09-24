@@ -3,11 +3,25 @@ import { fetchData } from "@/fetchUtils/fetch";
 
 export const useRoomStore = defineStore("RoomStore", {
   state: () => ({
-    rooms: [] as Room[], // Directly initialize as an array of Room
+    rooms: [] as Room[],
+    // Directly initialize as an array of Room
   }),
 
   getters: {
-    getRooms: (state) => state.rooms, // Simplified getter
+    getRooms: (state) => state.rooms,
+    getAllRooms: (state) => {
+      return Object.values(state.rooms) // Get all values (arrays) from the rooms object
+        .flat() // Flatten the arrays into a single array
+        .map((room) => ({
+          roomId: room.roomId,
+          name: room.name,
+          building: room.building,
+          instruments: room.instruments,
+          capacity: room.capacity,
+          features: room.features,
+          imageUrl: room.imageUrl || null,
+        }));
+    },
   },
 
   actions: {
@@ -22,5 +36,6 @@ export const useRoomStore = defineStore("RoomStore", {
     selectRoomType(roomType: string): void {
       // Find the room with the given roomType and set it as selected
     },
+    // Other actions...
   },
 });
