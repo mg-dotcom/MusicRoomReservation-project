@@ -70,7 +70,28 @@ input {
   outline: none; /* Remove the default focus ring */
 }
 
-/* Ensure Tailwind CSS is properly configured or remove these lines if not using Tailwind CSS */
+.all-rooms {
+  cursor: pointer;
+  background-color: white;
+  background-blend-mode: color;
+}
+
+.all-rooms:hover {
+  background: linear-gradient(to top, white, #e2e8f0);
+  transition: 0.3s background-color;
+}
+
+.room-types {
+  cursor: pointer;
+  background-color: white;
+  background-blend-mode: color;
+}
+
+.room-types:hover {
+  background: linear-gradient(to top, white, #e2e8f0);
+  transition: 0.3s background-color;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

@@ -1,0 +1,106 @@
+{
+  "roomTypes": {
+    "practiceRooms": [
+      {
+        "roomId": "A101",
+        "name": "Melody Haven",
+        "building": "A",
+        "instruments": ["Upright piano"],
+        "capacity": { "min": 1, "max": 3 },
+        "features": ["Music stand", "Adjustable stool", "Soundproofing"]
+      },
+      {
+        "roomId": "A102",
+        "name": "Harmony Hub",
+        "building": "A",
+        "instruments": ["Digital piano"],
+        "capacity": { "min": 3, "max": 5 },
+        "features": ["Several music stands", "Four chairs", "Soundproofing"]
+      },
+      {
+        "roomId": "E501",
+        "name": "Percussion Paradise",
+        "building": "E",
+        "instruments": ["Acoustic drum set", "Electronic drum kit"],
+        "capacity": { "min": 1, "max": 3 },
+        "features": ["Soundproofing", "Recording equipment"]
+      }
+    ],
+    "rehearsalRooms": [
+      {
+        "roomId": "B201",
+        "name": "Rhythm Retreat",
+        "building": "B",
+        "instruments": ["Drum set", "Keyboard"],
+        "capacity": { "min": 6, "max": 10 },
+        "features": [
+          "Amps for guitars and bass",
+          "PA system",
+          "Music stands",
+          "Seating for up to 10 musicians"
+        ]
+      },
+      {
+        "roomId": "B202",
+        "name": "Lullaby Melody",
+        "building": "B",
+        "instruments": ["Grand piano"],
+        "capacity": { "min": 10, "max": 20 },
+        "features": ["Risers for choir", "Music stands", "Acoustic treatment"]
+      }
+    ],
+    "recordingStudios": [
+      {
+        "roomId": "C301",
+        "name": "Echo Chamber",
+        "building": "C",
+        "instruments": ["Basic recording setup"],
+        "capacity": { "min": 3, "max": 5 },
+        "features": [
+          "Audio interface",
+          "Studio monitors",
+          "Condenser microphones",
+          "Soundproofing"
+        ]
+      },
+      {
+        "roomId": "C302",
+        "name": "Sonic Sanctuary",
+        "building": "C",
+        "instruments": ["High-end recording equipment"],
+        "capacity": { "min": 6, "max": 10 },
+        "features": [
+          "Mixing console",
+          "Isolation booth",
+          "High-end microphones",
+          "Outboard gear",
+          "Soundproofing"
+        ]
+      }
+    ],
+    "performanceSpaces": [
+      {
+        "roomId": "D401",
+        "name": "Recital Royale",
+        "building": "D",
+        "instruments": ["Grand piano"],
+        "capacity": { "min": 10, "max": 100 },
+        "features": ["Stage", "Seating for 100", "Sound and lighting system"]
+      },
+      {
+        "roomId": "D402",
+        "name": "Concert Coliseum",
+        "building": "D",
+        "instruments": ["Multiple instruments for orchestra"],
+        "capacity": { "min": 10, "max": 500 },
+        "features": [
+          "Large stage",
+          "Seating for 500",
+          "Orchestra pit",
+          "Advanced acoustics",
+          "Sound and lighting system"
+        ]
+      }
+    ]
+  }
+}
