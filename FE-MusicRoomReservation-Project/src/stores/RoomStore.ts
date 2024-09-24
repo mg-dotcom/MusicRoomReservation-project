@@ -10,8 +10,8 @@ export const useRoomStore = defineStore("RoomStore", {
   getters: {
     getRooms: (state) => state.rooms,
     getAllRooms: (state) => {
-      return Object.values(state.rooms) // Get all values (arrays) from the rooms object
-        .flat() // Flatten the arrays into a single array
+      return Object.values(state.rooms)
+        .flat()
         .map((room) => ({
           roomId: room.roomId,
           name: room.name,
