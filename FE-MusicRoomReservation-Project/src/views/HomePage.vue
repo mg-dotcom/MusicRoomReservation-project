@@ -136,7 +136,7 @@ onMounted(async () => {
 
 const target = ref(null);
 
-onClickOutside(target, () => clearAllFilter());
+onClickOutside(target, () => clearSelect());
 </script>
 
 <template>
@@ -281,10 +281,7 @@ onClickOutside(target, () => clearAllFilter());
       </div>
     </div>
 
-    <div
-      class="section-room-types flex gap-x-3 mt-11 text-xl relative z-0"
-      ref="target"
-    >
+    <div class="section-room-types flex gap-x-3 mt-11 text-xl relative z-0">
       <div
         class="all-rooms px-7 py-3 font-semibold rounded-t-lg border-[1px] border-black bg-white relative z-5"
         :class="{
@@ -321,7 +318,6 @@ onClickOutside(target, () => clearAllFilter());
 
     <div
       class="section-all-rooms relative -top-1 min-h-screen bg-white rounded-b-lg rounded-e-lg border-[1px] border-black gap-x-5 grid xl:grid-row-1 xl:grid-cols-1 lg:grid-cols-1 md:grid-cols-2 sm:grid-cols-1"
-      ref="target"
     >
       <RoomCard
         v-for="room in mergeRooms"
