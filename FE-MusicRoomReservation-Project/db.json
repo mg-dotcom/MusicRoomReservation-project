@@ -45,6 +45,7 @@
           "Music stands",
           "Seating for up to 10 musicians"
         ],
+        "imageUrl": "pic-practice-room/drum-set-key-board.jpg",
         "roomType": "Rehearsal Room"
       },
       {
@@ -54,6 +55,7 @@
         "instruments": ["Grand piano"],
         "capacity": { "min": 10, "max": 20 },
         "features": ["Risers for choir", "Music stands", "Acoustic treatment"],
+        "imageUrl": "pic-practice-room/grand-piano.jpg",
         "roomType": "Rehearsal Room"
       }
     ],
@@ -70,6 +72,7 @@
           "Condenser microphones",
           "Soundproofing"
         ],
+        "imageUrl": "pic-practice-room/basic-recording-setup.jpg",
         "roomType": "Recording Studio"
       },
       {
@@ -85,6 +88,7 @@
           "Outboard gear",
           "Soundproofing"
         ],
+        "imageUrl": "pic-practice-room/high-end-recording-setup.jpg",
         "roomType": "Recording Studio"
       }
     ],
@@ -96,6 +100,7 @@
         "instruments": ["Grand piano"],
         "capacity": { "min": 10, "max": 100 },
         "features": ["Stage", "Seating for 100", "Sound and lighting system"],
+        "imageUrl": "pic-practice-room/grand-piano-hall.jpg",
         "roomType": "Performance Space"
       },
       {
@@ -111,6 +116,7 @@
           "Advanced acoustics",
           "Sound and lighting system"
         ],
+        "imageUrl": "pic-practice-room/orchestra.jpg",
         "roomType": "Performance Space"
       }
     ]

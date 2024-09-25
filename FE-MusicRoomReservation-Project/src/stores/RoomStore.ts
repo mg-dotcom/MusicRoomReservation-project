@@ -34,9 +34,5 @@ export const useRoomStore = defineStore("RoomStore", {
         console.error("Failed to fetch rooms:", error);
       }
     },
-    selectRoomType(roomType: string): void {
-      // Find the room with the given roomType and set it as selected
-    },
-    // Other actions...
   },
 });

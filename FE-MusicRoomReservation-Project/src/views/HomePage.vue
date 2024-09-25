@@ -1,14 +1,15 @@
-<script setup>
-import { onMounted, ref } from "vue";
+<script setup lang="ts">
+import { computed, onMounted, ref } from "vue";
 import { useRoomStore } from "@/stores/RoomStore";
-
+import RoomCard from "@/components/RoomCard.vue";
 import SearchButton from "@/components/SearchButton.vue";
-import { capitalizeAndSpace } from "@/libsUtils.js";
+import { capitalizeAndSpace } from "@/libsUtils.ts";
 
 const roomStore = useRoomStore();
-const roomKeys = ref([]);
+const roomTypes = ref<{ roomType: string; rooms: any }[]>([]);
+const styleRoomTypes = ref<string>();
 
-const timeSlots = ref([
+const timeSlots = ref<string[]>([
   "08:30 - 10:20",
   "10:30 - 12:20",
   "12:30 - 14:20",
@@ -17,12 +18,36 @@ const timeSlots = ref([
 
 onMounted(async () => {
   await roomStore.loadRooms();
-  roomKeys.value = Object.keys(roomStore.getRooms).map((key) => {
+  roomTypes.value = Object.keys(roomStore.getRooms).map((key) => {
     return {
       roomType: key,
       rooms: roomStore.getRooms[key],
     };
   });
+});
+
+const selectedRoomType = (roomType: string) => {
+  if (roomType === "all") {
+    filteredRoomTypes.value = roomStore.getMergeRooms;
+    styleRoomTypes.value = "all";
+  } else {
+    filteredRoomTypes.value = roomStore.getRooms[roomType];
+    styleRoomTypes.value = roomType;
+  }
+};
+
+const filteredRoomTypes = ref<any[]>([]);
+
+onMounted(async () => {
+  await roomStore.loadRooms();
+  roomTypes.value = Object.keys(roomStore.getRooms).map((key) => {
+    return {
+      roomType: key,
+      rooms: roomStore.getRooms[key],
+    };
+  });
+  filteredRoomTypes.value = roomStore.getMergeRooms;
+  styleRoomTypes.value = "all";
 });
 </script>
 
@@ -38,32 +63,17 @@ onMounted(async () => {
             <div class="filter-room font-medium">
               <select id="room" class="p-1">
                 <option value="" disabled selected hidden>Room</option>
-                <option
-                  v-for="room in roomStore.getRooms"
-                  :key="room.roomId"
-                  :value="room.roomId"
-                >
-                  {{ room.name }}
-                </option>
               </select>
             </div>
             <div class="filter-count font-medium">
               <select id="count" class="p-1">
                 <option value="" disabled selected hidden>Count</option>
-                <option v-for="n in 10" :key="n" :value="n">{{ n }}</option>
               </select>
             </div>
             <div class="filter-instrument font-medium">
               <select id="instrument" class="p-1">
                 <option value="" disabled selected hidden>
                   Music instrument
-                </option>
-                <option
-                  v-for="instrument in roomStore.getInstruments"
-                  :key="instrument"
-                  :value="instrument"
-                >
-                  {{ instrument }}
                 </option>
               </select>
             </div>
@@ -125,81 +135,86 @@ onMounted(async () => {
 
     <div class="section-room-types flex gap-x-3 mt-11 text-xl relative z-0">
       <div
-        class="all-rooms px-7 py-3 font-semibold rounded-t-lg border-[1px] border-black bg-white"
+        class="all-rooms px-7 py-3 font-semibold rounded-t-lg border-[1px] border-black bg-white relative z-5"
+        :class="{
+          'all-rooms-selected bg-primary pointer-events-none':
+            styleRoomTypes === 'all',
+        }"
+        @click="selectedRoomType('all')"
       >
-        All Rooms
+        <h2 class="relative z-10">All Rooms</h2>
+        <div
+          v-if="styleRoomTypes === 'all'"
+          class="bg-white w-full h-[84%] absolute bottom-0 left-0"
+        ></div>
       </div>
+
       <div
-        class="room-types px-5 py-3 font-semibold rounded-t-lg border-[1px] border-black bg-white"
-        v-for="(roomKey, index) in roomKeys"
+        class="room-types px-5 py-3 font-semibold rounded-t-lg border-[1px] border-black relative bg-white"
+        :class="{
+          'room-types-selected bg-primary pointer-events-none':
+            styleRoomTypes === room.roomType,
+        }"
+        v-for="(room, index) in roomTypes"
         :key="index"
-        @click="roomStore.selectRoomType(roomKey.roomType)"
+        @click="selectedRoomType(room.roomType)"
       >
-        {{ capitalizeAndSpace(roomKey.roomType) }}
+        <h2 class="relative z-10">{{ capitalizeAndSpace(room.roomType) }}</h2>
+
+        <div
+          v-if="styleRoomTypes === room.roomType"
+          class="bg-white w-full h-[84%] absolute bottom-0 left-0"
+        ></div>
       </div>
     </div>
 
     <div
       class="section-all-rooms relative -top-1 min-h-screen bg-white rounded-b-lg rounded-e-lg border-[1px] border-black gap-x-5 grid xl:grid-row-1 xl:grid-cols-1 lg:grid-cols-1 md:grid-cols-2 sm:grid-cols-1"
     >
-      <div
-        class="room bg-white rounded-lg p-5 m-5 shadow-md grid grid-cols-7 gap-x-5"
-        v-for="(room, index) in roomStore.getMergeRooms"
+      <RoomCard
+        v-for="room in filteredRoomTypes"
         :key="room.roomId"
+        :time-slots="timeSlots"
       >
-        <img
-          :src="room.imageUrl"
-          :alt="`Room ${room.roomId}: ${room.name}`"
-          class="w-full h-full rounded-lg object-cover col-span-2 "
-        />
-        <div class="room-reservation col-span-3 px-4">
-          <h3 class="text-xl font-bold mb-2">
-            {{ `Room ${room.roomId}: ${room.name}` }}
-          </h3>
-          <p class="text-gray-500 mb-4">
-            {{ `${room.capacity.min}-${room.capacity.max} people` }}
+        <template #image>
+          <img
+            :src="room.imageUrl"
+            :alt="`Room ${room.roomId}: ${room.name}`"
+            class="h-56 w-96 rounded-lg object-cover col-span-2"
+          />
+        </template>
+
+        <template #room-name>
+          {{ `Room ${room.roomId}: ${room.name}` }}
+        </template>
+
+        <template #capacity>
+          {{ `${room.capacity.min}-${room.capacity.max} people` }}
+        </template>
+
+        <template #details>
+          <p class="text-gray-500">
+            <span class="font-semibold">Building:</span> {{ room.building }}
           </p>
-          <div class="grid grid-cols-4 gap-3 text-center">
-            <div
-              v-for="time in timeSlots"
-              :key="time"
-              class="bg-[#D7FEF2] p-2 rounded-lg"
-            >
-              {{ time }}
-            </div>
-            <button
-              :key="index"
-              v-for="time in timeSlots"
-              class="bg-[#4992f2] text-white px-4 py-2 rounded-lg"
-            >
-              RESERVE
-            </button>
-          </div>
-        </div>
-        <div class="room-detail flex col-span-2">
-          <div :key="n" class="h-full w-0.5 bg-slate-100"></div>
-          <div class="ml-7">
-            <h3 class="text-xl font-bold mb-2">Room Detail</h3>
-            <p class="text-gray-500">
-              <span class="font-semibold">Building:</span> {{ room.building }}
-            </p>
-            <p class="text-gray-500">
-              <span class="font-semibold">Instruments:</span>
-              {{ room.instruments.join(", ") }}
-            </p>
-            <p class="text-gray-500">
-              <span class="font-semibold">Features:</span>
-              {{ room.features.join(", ") }}
-            </p>
-            <p class="text-gray-500">
-              <span class="font-semibold">Room Type:</span>
-              {{ room.roomType }}
-            </p>
-          </div>
-        </div>
-      </div>
+          <p class="text-gray-500">
+            <span class="font-semibold">Instruments:</span>
+            {{ room.instruments.join(", ") }}
+          </p>
+          <p class="text-gray-500">
+            <span class="font-semibold">Features:</span>
+            {{ room.features.join(", ") }}
+          </p>
+          <p class="text-gray-500">
+            <span class="font-semibold">Room Type:</span> {{ room.roomType }}
+          </p>
+        </template>
+      </RoomCard>
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.bg-primary {
+  background-color: #71dbbb;
+}
+</style>
