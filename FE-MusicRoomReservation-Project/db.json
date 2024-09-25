@@ -8,7 +8,8 @@
         "instruments": ["Upright piano"],
         "capacity": { "min": 1, "max": 3 },
         "features": ["Music stand", "Adjustable stool", "Soundproofing"],
-        "imageUrl": "https://cdn.pixabay.com/photo/2016/11/18/15/54/apartment-1835482_1280.jpg"
+        "imageUrl": "https://cdn.pixabay.com/photo/2016/11/18/15/54/apartment-1835482_1280.jpg",
+        "roomType": "Practice Room"
       },
       {
         "roomId": "A102",
@@ -16,7 +17,8 @@
         "building": "A",
         "instruments": ["Digital piano"],
         "capacity": { "min": 3, "max": 5 },
-        "features": ["Several music stands", "Four chairs", "Soundproofing"]
+        "features": ["Several music stands", "Four chairs", "Soundproofing"],
+        "roomType": "Practice Room"
       },
       {
         "roomId": "E501",
@@ -24,7 +26,8 @@
         "building": "E",
         "instruments": ["Acoustic drum set", "Electronic drum kit"],
         "capacity": { "min": 1, "max": 3 },
-        "features": ["Soundproofing", "Recording equipment"]
+        "features": ["Soundproofing", "Recording equipment"],
+        "roomType": "Practice Room"
       }
     ],
     "rehearsalRooms": [
@@ -39,7 +42,8 @@
           "PA system",
           "Music stands",
           "Seating for up to 10 musicians"
-        ]
+        ],
+        "roomType": "Rehearsal Room"
       },
       {
         "roomId": "B202",
@@ -47,7 +51,8 @@
         "building": "B",
         "instruments": ["Grand piano"],
         "capacity": { "min": 10, "max": 20 },
-        "features": ["Risers for choir", "Music stands", "Acoustic treatment"]
+        "features": ["Risers for choir", "Music stands", "Acoustic treatment"],
+        "roomType": "Rehearsal Room"
       }
     ],
     "recordingStudios": [
@@ -62,7 +67,8 @@
           "Studio monitors",
           "Condenser microphones",
           "Soundproofing"
-        ]
+        ],
+        "roomType": "Recording Studio"
       },
       {
         "roomId": "C302",
@@ -76,7 +82,8 @@
           "High-end microphones",
           "Outboard gear",
           "Soundproofing"
-        ]
+        ],
+        "roomType": "Recording Studio"
       }
     ],
     "performanceSpaces": [
@@ -86,7 +93,8 @@
         "building": "D",
         "instruments": ["Grand piano"],
         "capacity": { "min": 10, "max": 100 },
-        "features": ["Stage", "Seating for 100", "Sound and lighting system"]
+        "features": ["Stage", "Seating for 100", "Sound and lighting system"],
+        "roomType": "Performance Space"
       },
       {
         "roomId": "D402",
@@ -100,7 +108,8 @@
           "Orchestra pit",
           "Advanced acoustics",
           "Sound and lighting system"
-        ]
+        ],
+        "roomType": "Performance Space"
       }
     ]
   }

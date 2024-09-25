@@ -9,7 +9,7 @@ export const useRoomStore = defineStore("RoomStore", {
 
   getters: {
     getRooms: (state) => state.rooms,
-    getAllRooms: (state) => {
+    getMergeRooms: (state) => {
       return Object.values(state.rooms)
         .flat()
         .map((room) => ({
@@ -20,6 +20,7 @@ export const useRoomStore = defineStore("RoomStore", {
           capacity: room.capacity,
           features: room.features,
           imageUrl: room.imageUrl || null,
+          roomType: room.roomType,
         }));
     },
   },

@@ -8,6 +8,13 @@ import { capitalizeAndSpace } from "@/libsUtils.js";
 const roomStore = useRoomStore();
 const roomKeys = ref([]);
 
+const timeSlots = ref([
+  "08:30 - 10:20",
+  "10:30 - 12:20",
+  "12:30 - 14:20",
+  "14:30 - 16:20",
+]);
+
 onMounted(async () => {
   await roomStore.loadRooms();
   roomKeys.value = Object.keys(roomStore.getRooms).map((key) => {
@@ -31,17 +38,19 @@ onMounted(async () => {
             <div class="filter-room font-medium">
               <select id="room" class="p-1">
                 <option value="" disabled selected hidden>Room</option>
-                <option value="room1">Room 1</option>
-                <option value="room2">Room 2</option>
-                <option value="room3">Room 3</option>
+                <option
+                  v-for="room in roomStore.getRooms"
+                  :key="room.roomId"
+                  :value="room.roomId"
+                >
+                  {{ room.name }}
+                </option>
               </select>
             </div>
             <div class="filter-count font-medium">
               <select id="count" class="p-1">
                 <option value="" disabled selected hidden>Count</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
+                <option v-for="n in 10" :key="n" :value="n">{{ n }}</option>
               </select>
             </div>
             <div class="filter-instrument font-medium">
@@ -49,9 +58,13 @@ onMounted(async () => {
                 <option value="" disabled selected hidden>
                   Music instrument
                 </option>
-                <option value="guitar">Guitar</option>
-                <option value="piano">Piano</option>
-                <option value="drums">Drums</option>
+                <option
+                  v-for="instrument in roomStore.getInstruments"
+                  :key="instrument"
+                  :value="instrument"
+                >
+                  {{ instrument }}
+                </option>
               </select>
             </div>
             <SearchButton />
@@ -126,52 +139,62 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div class="relative -top-1">
+    <div
+      class="section-all-rooms relative -top-1 min-h-screen bg-white rounded-b-lg rounded-e-lg border-[1px] border-black gap-x-5 grid xl:grid-row-1 xl:grid-cols-1 lg:grid-cols-1 md:grid-cols-2 sm:grid-cols-1"
+    >
       <div
-        class="z-10 section-rooms min-h-screen bg-white rounded-b-lg rounded-e-lg border-[1px] border-black"
+        class="room bg-white rounded-lg p-5 m-5 shadow-md grid grid-cols-7 gap-x-5"
+        v-for="(room, index) in roomStore.getMergeRooms"
+        :key="room.roomId"
       >
-        <div
-          class="bg-white rounded-lg p-5 m-5 shadow-md mb-4 flex gap-x-5"
-          v-for="(room, index) in roomStore.getAllRooms"
-          :key="room.roomId"
-        >
-          <img
-            :src="room.imageUrl"
-            :alt="`Room ${room.roomId}: ${room.name}`"
-            class="w-96 rounded-lg mb-4"
-          />
-          <div>
-            <h3 class="text-xl font-bold mb-2">
-              {{ `Room ${room.roomId}: ${room.name}` }}
-            </h3>
-            <p class="text-gray-500 mb-4">
-              {{ `${room.capacity.min}-${room.capacity.max} people` }}
+        <img
+          :src="room.imageUrl"
+          :alt="`Room ${room.roomId}: ${room.name}`"
+          class="w-full h-full rounded-lg object-cover col-span-2 "
+        />
+        <div class="room-reservation col-span-3 px-4">
+          <h3 class="text-xl font-bold mb-2">
+            {{ `Room ${room.roomId}: ${room.name}` }}
+          </h3>
+          <p class="text-gray-500 mb-4">
+            {{ `${room.capacity.min}-${room.capacity.max} people` }}
+          </p>
+          <div class="grid grid-cols-4 gap-3 text-center">
+            <div
+              v-for="time in timeSlots"
+              :key="time"
+              class="bg-[#D7FEF2] p-2 rounded-lg"
+            >
+              {{ time }}
+            </div>
+            <button
+              :key="index"
+              v-for="time in timeSlots"
+              class="bg-[#4992f2] text-white px-4 py-2 rounded-lg"
+            >
+              RESERVE
+            </button>
+          </div>
+        </div>
+        <div class="room-detail flex col-span-2">
+          <div :key="n" class="h-full w-0.5 bg-slate-100"></div>
+          <div class="ml-7">
+            <h3 class="text-xl font-bold mb-2">Room Detail</h3>
+            <p class="text-gray-500">
+              <span class="font-semibold">Building:</span> {{ room.building }}
             </p>
-
-            <div class="grid grid-cols-4 gap-2">
-              <div
-                v-for="time in [
-                  '08:30 - 10:20',
-                  '10:30 - 12:20',
-                  '12:30 - 14:20',
-                  '14:30 - 16:20',
-                ]"
-                :key="time"
-                class="bg-[#D7FEF2] p-2 rounded-lg"
-              >
-                {{ time }}
-              </div>
-            </div>
-
-            <div class="grid grid-cols-4 gap-2 mt-4">
-              <button
-                v-for="(feature, index) in room.features"
-                :key="index"
-                class="bg-[#4992f2] text-white px-4 py-2 rounded-lg"
-              >
-                RESERVE
-              </button>
-            </div>
+            <p class="text-gray-500">
+              <span class="font-semibold">Instruments:</span>
+              {{ room.instruments.join(", ") }}
+            </p>
+            <p class="text-gray-500">
+              <span class="font-semibold">Features:</span>
+              {{ room.features.join(", ") }}
+            </p>
+            <p class="text-gray-500">
+              <span class="font-semibold">Room Type:</span>
+              {{ room.roomType }}
+            </p>
           </div>
         </div>
       </div>

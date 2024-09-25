@@ -9,4 +9,5 @@ interface Room {
   };
   features: string[];
   imageUrl?: string;
+  roomType: string;
 }
