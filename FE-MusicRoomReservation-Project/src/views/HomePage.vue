@@ -1,13 +1,21 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { useRoomStore } from "@/stores/RoomStore";
+import { useRoomStore } from "@/stores/RoomStore.ts";
 import RoomCard from "@/components/RoomCard.vue";
 import SearchButton from "@/components/SearchButton.vue";
 import { capitalizeAndSpace } from "@/libsUtils.ts";
 
+import { onClickOutside } from "@vueuse/core";
+
 const roomStore = useRoomStore();
 const roomTypes = ref<{ roomType: string; rooms: any }[]>([]);
 const styleRoomTypes = ref<string>();
+
+const roomOption = ref<string>("Room");
+const capacityOption = ref<string>("Capacity");
+const instrumentOption = ref<string>("Instrument");
+const searchFilterArr = ref<any[]>([]);
+const searchInput = ref<string>("");
 
 const timeSlots = ref<string[]>([
   "08:30 - 10:20",
@@ -26,17 +34,93 @@ onMounted(async () => {
   });
 });
 
+const distinctCapacity = computed(() => {
+  const uniqueCapacities = new Set();
+  return roomStore.getMergeRooms.filter((room) => {
+    const capacityStr = `${room.capacity.min}-${room.capacity.max}`;
+    return uniqueCapacities.has(capacityStr)
+      ? false
+      : uniqueCapacities.add(capacityStr);
+  });
+});
+
 const selectedRoomType = (roomType: string) => {
   if (roomType === "all") {
-    filteredRoomTypes.value = roomStore.getMergeRooms;
+    mergeRooms.value = roomStore.getMergeRooms;
     styleRoomTypes.value = "all";
   } else {
-    filteredRoomTypes.value = roomStore.getRooms[roomType];
+    mergeRooms.value = roomStore.getRooms[roomType];
     styleRoomTypes.value = roomType;
+    searchFilterArr.value = [];
+    clearSelect();
   }
 };
 
-const filteredRoomTypes = ref<any[]>([]);
+const selectedFilter = (option: object) => {
+  if (searchFilterArr.value.length === 0) {
+    searchFilterArr.value.push(option);
+  } else {
+    const filterIndex = searchFilterArr.value.findIndex((filter) => {
+      return Object.keys(filter)[0] === Object.keys(option)[0];
+    });
+
+    if (filterIndex === -1) {
+      searchFilterArr.value.push(option);
+    } else {
+      searchFilterArr.value[filterIndex] = option;
+    }
+  }
+};
+
+const searchAllFilter = () => {
+  console.log(searchFilterArr.value);
+
+  let filteredRooms = roomStore.getMergeRooms;
+
+  const roomTypeFilter = searchFilterArr.value.find(
+    (filter) => filter.roomType
+  );
+
+  if (roomTypeFilter) {
+    filteredRooms = roomStore.getRooms[roomTypeFilter.roomType] || [];
+  }
+
+  searchFilterArr.value.forEach((filter) => {
+    const filterKey = Object.keys(filter)[0];
+
+    if (filterKey === "capacity") {
+      filteredRooms = filteredRooms.filter((room) => {
+        return (
+          room.capacity.min >= filter.capacity.min &&
+          room.capacity.max <= filter.capacity.max
+        );
+      });
+    } else if (filterKey === "instruments") {
+      filteredRooms = filteredRooms.filter((room) => {
+        return filter.instruments.every((instrument) =>
+          room.instruments.includes(instrument)
+        );
+      });
+    }
+  });
+  styleRoomTypes.value = "all";
+  mergeRooms.value = filteredRooms;
+};
+
+const clearAllFilter = () => {
+  searchFilterArr.value = [];
+  styleRoomTypes.value = "all";
+  mergeRooms.value = roomStore.getMergeRooms;
+  clearSelect();
+};
+
+const clearSelect = () => {
+  roomOption.value = "Room";
+  capacityOption.value = "Capacity";
+  instrumentOption.value = "Instrument";
+};
+
+const mergeRooms = ref<any[]>([]);
 
 onMounted(async () => {
   await roomStore.loadRooms();
@@ -46,9 +130,13 @@ onMounted(async () => {
       rooms: roomStore.getRooms[key],
     };
   });
-  filteredRoomTypes.value = roomStore.getMergeRooms;
+  mergeRooms.value = roomStore.getMergeRooms;
   styleRoomTypes.value = "all";
 });
+
+const target = ref(null);
+
+onClickOutside(target, () => clearAllFilter());
 </script>
 
 <template>
@@ -59,28 +147,87 @@ onMounted(async () => {
         <div class="flex flex-col text-lg">
           <div
             class="select-filter flex space-x-3 w-full justify-center items-center"
+            ref="target"
           >
             <div class="filter-room font-medium">
-              <select id="room" class="p-1">
-                <option value="" disabled selected hidden>Room</option>
-              </select>
-            </div>
-            <div class="filter-count font-medium">
-              <select id="count" class="p-1">
-                <option value="" disabled selected hidden>Count</option>
-              </select>
-            </div>
-            <div class="filter-instrument font-medium">
-              <select id="instrument" class="p-1">
-                <option value="" disabled selected hidden>
-                  Music instrument
+              <select
+                id="room"
+                class="p-1"
+                v-model="roomOption"
+                @change="selectedFilter(roomOption)"
+                :class="{
+                  'border-primary':
+                    searchFilterArr.filter((filter) => filter === roomOption)
+                      .length > 0,
+                }"
+              >
+                <option value="Room" disabled selected hidden>Room</option>
+                <option
+                  v-for="(room, index) in roomTypes"
+                  :value="{ roomType: room.roomType }"
+                  :key="index"
+                >
+                  {{ capitalizeAndSpace(room.roomType) }}
                 </option>
               </select>
             </div>
-            <SearchButton />
+
+            <div class="filter-capacity font-medium">
+              <select
+                id="capacity"
+                class="p-1"
+                v-model="capacityOption"
+                @change="selectedFilter(capacityOption)"
+                :class="{
+                  'border-primary':
+                    searchFilterArr.filter(
+                      (filter) => filter === capacityOption
+                    ).length > 0,
+                }"
+              >
+                <option value="Capacity" disabled selected hidden>
+                  Capacity
+                </option>
+
+                <option
+                  v-for="(room, index) in distinctCapacity"
+                  :value="{ capacity: room.capacity }"
+                  :key="index"
+                >
+                  {{ `${room.capacity.min}-${room.capacity.max} people` }}
+                </option>
+              </select>
+            </div>
+            <div class="filter-instrument font-medium">
+              <select
+                id="instrument"
+                class="p-1"
+                v-model="instrumentOption"
+                @change="selectedFilter(instrumentOption)"
+                :class="{
+                  'border-primary':
+                    searchFilterArr.filter(
+                      (filter) => filter === instrumentOption
+                    ).length > 0,
+                }"
+              >
+                <option value="Instrument" disabled selected hidden>
+                  Instrument
+                </option>
+                <option
+                  v-for="(room, index) in roomStore.getMergeRooms"
+                  :value="{ instruments: room.instruments }"
+                  :key="index"
+                >
+                  {{ room.instruments.join(", ") }}
+                </option>
+              </select>
+            </div>
+            <SearchButton @click="searchAllFilter" />
           </div>
           <div
-            class="my-2 text-sm text-slate-300 hover:text-slate-400 transition cursor-pointer"
+            class="my-2 text-sm text-slate-300 hover:text-slate-400 transition cursor-pointer w-fit"
+            @click="clearAllFilter"
           >
             Clear All Filter
           </div>
@@ -88,7 +235,8 @@ onMounted(async () => {
         <div class="search-filter relative">
           <input
             type="text"
-            placeholder="Search"
+            v-model="searchInput"
+            placeholder="Search a room"
             class="search-input h-9 w-64 px-2 focus:ring-2 focus:ring-primary focus:outline-none rounded-l-md"
           />
           <button
@@ -133,7 +281,10 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div class="section-room-types flex gap-x-3 mt-11 text-xl relative z-0">
+    <div
+      class="section-room-types flex gap-x-3 mt-11 text-xl relative z-0"
+      ref="target"
+    >
       <div
         class="all-rooms px-7 py-3 font-semibold rounded-t-lg border-[1px] border-black bg-white relative z-5"
         :class="{
@@ -170,9 +321,10 @@ onMounted(async () => {
 
     <div
       class="section-all-rooms relative -top-1 min-h-screen bg-white rounded-b-lg rounded-e-lg border-[1px] border-black gap-x-5 grid xl:grid-row-1 xl:grid-cols-1 lg:grid-cols-1 md:grid-cols-2 sm:grid-cols-1"
+      ref="target"
     >
       <RoomCard
-        v-for="room in filteredRoomTypes"
+        v-for="room in mergeRooms"
         :key="room.roomId"
         :time-slots="timeSlots"
       >
