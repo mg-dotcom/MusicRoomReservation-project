@@ -8,7 +8,7 @@
         "instruments": ["Upright piano"],
         "capacity": { "min": 1, "max": 3 },
         "features": ["Music stand", "Adjustable stool", "Soundproofing"],
-        "imageUrl": "https://cdn.pixabay.com/photo/2016/11/18/15/54/apartment-1835482_1280.jpg",
+        "imageUrl": "pic-practice-room/upright-piano.jpg",
         "roomType": "Practice Room"
       },
       {
@@ -18,6 +18,7 @@
         "instruments": ["Digital piano"],
         "capacity": { "min": 3, "max": 5 },
         "features": ["Several music stands", "Four chairs", "Soundproofing"],
+        "imageUrl": "pic-practice-room/electronic-piano.jpg",
         "roomType": "Practice Room"
       },
       {
@@ -27,6 +28,7 @@
         "instruments": ["Acoustic drum set", "Electronic drum kit"],
         "capacity": { "min": 1, "max": 3 },
         "features": ["Soundproofing", "Recording equipment"],
+        "imageUrl": "pic-practice-room/acoustic-drum-set.jpg",
         "roomType": "Practice Room"
       }
     ],
