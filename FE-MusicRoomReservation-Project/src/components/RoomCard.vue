@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const props = defineProps<{
   timeSlots: string[];
@@ -35,6 +38,7 @@ const props = defineProps<{
             v-for="time in props.timeSlots"
             :key="time"
             class="bg-[#4992f2] text-white px-4 py-2 rounded-lg transition duration-300 transform hover:bg-[#3e7ac9]"
+            @click="router.push({ name: 'reservation' })"
           >
             RESERVE
           </button>
