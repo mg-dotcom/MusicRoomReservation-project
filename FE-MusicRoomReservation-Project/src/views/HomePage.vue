@@ -1,19 +1,20 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import { useRoomStore } from "@/stores/RoomStore.ts";
+import { RouterView } from "vue-router";
 import RoomCard from "@/components/RoomCard.vue";
 import SearchButton from "@/components/SearchButton.vue";
 import { capitalizeAndSpace } from "@/libsUtils.ts";
-
+// import ReservationPage from "./ReservationPage.vue"; // Removed unused import
 import { onClickOutside } from "@vueuse/core";
 
 const roomStore = useRoomStore();
 const roomTypes = ref<{ roomType: string; rooms: any }[]>([]);
 const styleRoomTypes = ref<string>();
 
-const roomOption = ref<string>("Room");
-const capacityOption = ref<string>("Capacity");
-const instrumentOption = ref<string>("Instrument");
+const roomOption = ref<object | string>("Room");
+const capacityOption = ref<object | string>("Capacity");
+const instrumentOption = ref<object | string>("Instrument");
 const searchFilterArr = ref<any[]>([]);
 const searchInput = ref<string>("");
 
@@ -29,7 +30,7 @@ onMounted(async () => {
   roomTypes.value = Object.keys(roomStore.getRooms).map((key) => {
     return {
       roomType: key,
-      rooms: roomStore.getRooms[key],
+      rooms: (roomStore.getRooms as Record<string, any>)[key],
     };
   });
 });
@@ -49,10 +50,10 @@ const selectedRoomType = (roomType: string) => {
     mergeRooms.value = roomStore.getMergeRooms;
     styleRoomTypes.value = "all";
   } else {
-    mergeRooms.value = roomStore.getRooms[roomType];
+    mergeRooms.value = (roomStore.getRooms as Record<string, any>)[roomType];
     styleRoomTypes.value = roomType;
     searchFilterArr.value = [];
-    clearSelect();
+    clearSelectAndGetAllRooms();
   }
 };
 
@@ -73,8 +74,6 @@ const selectedFilter = (option: object) => {
 };
 
 const searchAllFilter = () => {
-  console.log(searchFilterArr.value);
-
   let filteredRooms = roomStore.getMergeRooms;
 
   const roomTypeFilter = searchFilterArr.value.find(
@@ -82,7 +81,7 @@ const searchAllFilter = () => {
   );
 
   if (roomTypeFilter) {
-    filteredRooms = roomStore.getRooms[roomTypeFilter.roomType] || [];
+    filteredRooms = (roomStore.getRooms as Record<string, any>)[roomTypeFilter.roomType] || [];
   }
 
   searchFilterArr.value.forEach((filter) => {
@@ -97,7 +96,7 @@ const searchAllFilter = () => {
       });
     } else if (filterKey === "instruments") {
       filteredRooms = filteredRooms.filter((room) => {
-        return filter.instruments.every((instrument) =>
+        return (filter.instruments as string[]).every((instrument: string) =>
           room.instruments.includes(instrument)
         );
       });
@@ -111,13 +110,23 @@ const clearAllFilter = () => {
   searchFilterArr.value = [];
   styleRoomTypes.value = "all";
   mergeRooms.value = roomStore.getMergeRooms;
-  clearSelect();
+  clearSelectAndGetAllRooms();
 };
 
-const clearSelect = () => {
+const clearSelectAndGetAllRooms = () => {
   roomOption.value = "Room";
   capacityOption.value = "Capacity";
   instrumentOption.value = "Instrument";
+};
+
+const handleSearch = (e: Event) => {
+  const input = e.target.value.toLowerCase().trim();
+  const mergeRoomBySearch = roomStore.getMergeRooms.filter((room) => {
+    const roomName = room.name.toLowerCase();
+    return roomName.includes(input);
+  });
+
+  mergeRooms.value = mergeRoomBySearch;
 };
 
 const mergeRooms = ref<any[]>([]);
@@ -134,12 +143,27 @@ onMounted(async () => {
   styleRoomTypes.value = "all";
 });
 
-const target = ref(null);
+const filterOption = ref<HTMLElement | null>(null);
+const roomList = ref<HTMLElement | null>(null);
 
-onClickOutside(target, () => clearSelect());
+const handleClickOutside = (event: MouseEvent) => {
+  // click other event.target to clear filter except filterOption and roomList
+  if (
+    filterOption.value &&
+    roomList.value &&
+    !filterOption.value.contains(event.target as Node) &&
+    !roomList.value.contains(event.target as Node)
+  ) {
+    clearAllFilter();
+  }
+};
+
+onClickOutside(filterOption, handleClickOutside);
+onClickOutside(roomList, handleClickOutside);
 </script>
 
 <template>
+  <RouterView />
   <div class="w-full px-14 py-11">
     <div class="section-filter">
       <h1 class="text-3xl font-semibold">Room Reservation</h1>
@@ -147,14 +171,14 @@ onClickOutside(target, () => clearSelect());
         <div class="flex flex-col text-lg">
           <div
             class="select-filter flex space-x-3 w-full justify-center items-center"
-            ref="target"
+            ref="filterOption"
           >
             <div class="filter-room font-medium">
               <select
                 id="room"
                 class="p-1"
                 v-model="roomOption"
-                @change="selectedFilter(roomOption)"
+                @change="selectedFilter(roomOption as object)"
                 :class="{
                   'border-primary':
                     searchFilterArr.filter((filter) => filter === roomOption)
@@ -177,7 +201,7 @@ onClickOutside(target, () => clearSelect());
                 id="capacity"
                 class="p-1"
                 v-model="capacityOption"
-                @change="selectedFilter(capacityOption)"
+                @change="selectedFilter(capacityOption as object)"
                 :class="{
                   'border-primary':
                     searchFilterArr.filter(
@@ -203,7 +227,7 @@ onClickOutside(target, () => clearSelect());
                 id="instrument"
                 class="p-1"
                 v-model="instrumentOption"
-                @change="selectedFilter(instrumentOption)"
+                @change="selectedFilter(instrumentOption as object)"
                 :class="{
                   'border-primary':
                     searchFilterArr.filter(
@@ -235,8 +259,9 @@ onClickOutside(target, () => clearSelect());
         <div class="search-filter relative">
           <input
             type="text"
-            v-model="searchInput"
-            placeholder="Search a room"
+            v-model.trim="searchInput"
+            @input="handleSearch"
+            placeholder="Search room name"
             class="search-input h-9 w-64 px-2 focus:ring-2 focus:ring-primary focus:outline-none rounded-l-md"
           />
           <button
@@ -317,6 +342,7 @@ onClickOutside(target, () => clearSelect());
     </div>
 
     <div
+      ref="roomList"
       class="section-all-rooms relative -top-1 min-h-screen bg-white rounded-b-lg rounded-e-lg border-[1px] border-black gap-x-5 grid xl:grid-row-1 xl:grid-cols-1 lg:grid-cols-1 md:grid-cols-2 sm:grid-cols-1"
     >
       <RoomCard
