@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { useRoomStore } from "@/stores/RoomStore.ts";
+import { useRoomStore } from "@/stores/roomStore";
 import { RouterView } from "vue-router";
 import RoomCard from "@/components/RoomCard.vue";
 import SearchButton from "@/components/SearchButton.vue";
@@ -76,12 +76,15 @@ const selectedFilter = (option: object) => {
 const searchAllFilter = () => {
   let filteredRooms = roomStore.getMergeRooms;
 
-  const roomTypeFilter = searchFilterArr.value.find(
-    (filter) => filter.roomType
-  );
+  const roomTypeFilter = searchFilterArr.value.find((filter) => {
+    return filter.roomType;
+  });
 
+  // if have roomType filter then filter by roomType first
   if (roomTypeFilter) {
-    filteredRooms = (roomStore.getRooms as Record<string, any>)[roomTypeFilter.roomType] || [];
+    filteredRooms =
+      (roomStore.getRooms as Record<string, any>)[roomTypeFilter.roomType] ||
+      [];
   }
 
   searchFilterArr.value.forEach((filter) => {
@@ -120,13 +123,14 @@ const clearSelectAndGetAllRooms = () => {
 };
 
 const handleSearch = (e: Event) => {
-  const input = e.target.value.toLowerCase().trim();
+  const input = (e.target as HTMLInputElement).value.toLowerCase().trim();
+
   const mergeRoomBySearch = roomStore.getMergeRooms.filter((room) => {
     const roomName = room.name.toLowerCase();
     return roomName.includes(input);
   });
 
-  mergeRooms.value = mergeRoomBySearch;
+  mergeRooms.value = mergeRoomBySearch; // Assuming mergeRooms is a ref
 };
 
 const mergeRooms = ref<any[]>([]);
@@ -136,7 +140,7 @@ onMounted(async () => {
   roomTypes.value = Object.keys(roomStore.getRooms).map((key) => {
     return {
       roomType: key,
-      rooms: roomStore.getRooms[key],
+      rooms: roomStore.getRooms[key as keyof typeof roomStore.getRooms],
     };
   });
   mergeRooms.value = roomStore.getMergeRooms;
