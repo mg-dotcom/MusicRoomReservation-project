@@ -4,7 +4,7 @@ import { useRoomStore } from "@/stores/RoomStore";
 import { RouterView, useRoute } from "vue-router";
 import RoomCard from "@/components/RoomCard.vue";
 import SearchButton from "@/components/SearchButton.vue";
-import { capitalizeAndSpace } from "@/libsUtils.ts";
+import { capitalizeAndSpace } from "@/libsUtils";
 // import ReservationPage from "./ReservationPage.vue"; // Removed unused import
 // import { onClickOutside } from "@vueuse/core";
 import router from "@/router";

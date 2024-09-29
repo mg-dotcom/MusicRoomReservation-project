@@ -4,7 +4,7 @@ import { fetchData } from "@/fetchUtils/fetch";
 export const useRoomStore = defineStore("RoomStore", {
   state: () => ({
     rooms: [] as Room[],
-    bookedRoom: {} as BookedRoom | {},
+    bookedRoom: null as BookedRoom | null, // Initialize to null
   }),
 
   getters: {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from "vue";
-import { useRoomStore } from "../stores/RoomStore";
+import { useRoomStore } from "@/stores/RoomStore";
 import { useRoute, useRouter } from "vue-router";
 import Swal from "sweetalert2";
 
@@ -76,43 +76,43 @@ const confirmReservation = () => {
             <h3 class="text-lg font-bold">Room Detail</h3>
           </div>
           <img
-            :src="roomStore.getBookedRoom.imageUrl"
-            :alt="`Room ${roomStore.getBookedRoom.roomId}: ${roomStore.getBookedRoom.name}`"
+            :src="roomStore.getBookedRoom?.imageUrl"
+            :alt="`Room ${roomStore.getBookedRoom?.roomId}: ${roomStore.getBookedRoom?.name}`"
             class="object-cover rounded-lg"
           />
           <div class="ml-3 booked-room-detail flex flex-col justify-between">
             <div>
               <div class="flex justify-between">
                 <h4 class="text-lg font-bold">
-                  {{ roomStore.getBookedRoom.name }}
+                  {{ roomStore.getBookedRoom?.name }}
                 </h4>
                 <h4 class="text-lg font-bold">
-                  {{ roomStore.getBookedRoom.roomId }}
+                  {{ roomStore.getBookedRoom?.roomId }}
                 </h4>
               </div>
 
               <p class="text-gray-500">
                 <span class="font-semibold">Building:</span>
-                {{ roomStore.getBookedRoom.building }}
+                {{ roomStore.getBookedRoom?.building }}
               </p>
               <p class="text-gray-500">
                 <span class="font-semibold">Instruments:</span>
-                {{ roomStore.getBookedRoom.instruments.join(", ") }}
+                {{ roomStore.getBookedRoom?.instruments.join(", ") }}
               </p>
               <p class="text-gray-500">
                 <span class="font-semibold">Features:</span>
-                {{ roomStore.getBookedRoom.features.join(", ") }}
+                {{ roomStore.getBookedRoom?.features.join(", ") }}
               </p>
               <p class="text-gray-500">
                 <span class="font-semibold">Capacity:</span>
-                {{ roomStore.getBookedRoom.capacity.min }}-{{
-                  roomStore.getBookedRoom.capacity.max
+                {{ roomStore.getBookedRoom?.capacity.min }}-{{
+                  roomStore.getBookedRoom?.capacity.max
                 }}
                 people
               </p>
               <p class="text-gray-500">
                 <span class="font-semibold">Room Type:</span>
-                {{ roomStore.getBookedRoom.roomType }}
+                {{ roomStore.getBookedRoom?.roomType }}
               </p>
             </div>
 
@@ -123,7 +123,7 @@ const confirmReservation = () => {
               <div class="flex justify-between">
                 <p class="text-gray-500">
                   <span class="font-semibold">Time:</span>
-                  {{ roomStore.getBookedRoom.time }}
+                  {{ roomStore.getBookedRoom?.time }}
                 </p>
                 <p class="text-gray-500">
                   <span class="font-semibold">Date:</span>
