@@ -12,6 +12,6 @@ interface Room {
   roomType: string;
 }
 
-interface RoomAndTime extends Room {
+interface BookedRoom extends Room {
   time?: string;
 }

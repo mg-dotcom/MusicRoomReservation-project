@@ -11,7 +11,7 @@ import { useRouter } from "vue-router";
 
 <template>
   <div
-    class="room bg-white rounded-lg p-5 m-5 shadow-lg transition-transform transform hover:scale-[1.02] duration-300"
+    class="room bg-white rounded-lg p-5 m-5 h-fit shadow-lg transition-transform transform hover:scale-[1.02] duration-300"
   >
     <div class="grid grid-cols-7 gap-x-5">
       <!-- Image Slot -->

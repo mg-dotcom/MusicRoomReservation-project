@@ -6,7 +6,7 @@ import RoomCard from "@/components/RoomCard.vue";
 import SearchButton from "@/components/SearchButton.vue";
 import { capitalizeAndSpace } from "@/libsUtils.ts";
 // import ReservationPage from "./ReservationPage.vue"; // Removed unused import
-import { onClickOutside } from "@vueuse/core";
+// import { onClickOutside } from "@vueuse/core";
 import router from "@/router";
 
 const roomStore = useRoomStore();
@@ -26,7 +26,7 @@ const timeSlots = ref<string[]>([
   "14:30 - 16:20",
 ]);
 
-const route = useRoute();
+// const route = useRoute();
 
 onMounted(async () => {
   await roomStore.loadRooms();
@@ -75,6 +75,8 @@ const selectedFilter = (option: object) => {
     }
   }
 };
+
+const fsdf = ref([]);
 
 const searchAllFilter = () => {
   let filteredRooms = roomStore.getMergeRooms;
@@ -154,36 +156,13 @@ const filterOption = ref<HTMLElement | null>(null);
 const roomList = ref<HTMLElement | null>(null);
 const currentRoomType = ref<HTMLElement | null>(null);
 
-const handleClickOutside = (event: MouseEvent) => {
-  // click other event.target to clear filter except filterOption and roomList
-  if (
-    filterOption.value &&
-    roomList.value &&
-    currentRoomType &&
-    !filterOption.value.contains(event.target as Node) &&
-    !roomList.value.contains(event.target as Node) &&
-    !currentRoomType.value.contains(event.target as Node)
-  ) {
-    clearAllFilter();
-  }
-
-  // if (route.name === "reservation") {
-  //   styleRoomTypes.value = ;
-  // }
-};
-
-onClickOutside(filterOption, handleClickOutside);
-onClickOutside(roomList, handleClickOutside);
-
-const test = (room: object, time: string) => {
-  // roomStore.setSelectedRoom(room, time);
-  // console.log(room, time);
-  const formatObj = {
-    room: room,
-    time: time,
-  };  
-
-  roomStore.setSelectedRoom(formatObj);
+const reserveRoom = (room: object, time: string) => {
+  const selectedRoom = {
+    ...room,
+    ...{ time: time },
+  } as BookedRoom;
+  roomStore.setSelectedRoom(selectedRoom);
+  router.push({ name: "reservation" });
 };
 </script>
 
@@ -206,7 +185,7 @@ const test = (room: object, time: string) => {
                 @change="selectedFilter(roomOption as object)"
                 :class="{
                   'border-primary':
-                    searchFilterArr.filter((filter) => filter === roomOption)
+                    searchFilterArr.filter((filter: any) => filter === roomOption)
                       .length > 0,
                 }"
               >
@@ -230,7 +209,7 @@ const test = (room: object, time: string) => {
                 :class="{
                   'border-primary':
                     searchFilterArr.filter(
-                      (filter) => filter === capacityOption
+                      (filter: any) => filter === capacityOption
                     ).length > 0,
                 }"
               >
@@ -256,7 +235,7 @@ const test = (room: object, time: string) => {
                 :class="{
                   'border-primary':
                     searchFilterArr.filter(
-                      (filter) => filter === instrumentOption
+                      (filter: any) => filter === instrumentOption
                     ).length > 0,
                 }"
               >
@@ -371,7 +350,7 @@ const test = (room: object, time: string) => {
 
     <div
       ref="roomList"
-      class="section-all-rooms relative -top-1 min-h-screen bg-white rounded-b-lg rounded-e-lg border-[1px] border-black gap-x-5 grid xl:grid-row-1 xl:grid-cols-1 lg:grid-cols-1 md:grid-cols-2 sm:grid-cols-1"
+      class="section-all-rooms relative -top-1 bg-white rounded-b-lg rounded-e-lg border-[1px] border-black gap-x-5 grid xl:grid-row-1 xl:grid-cols-1 lg:grid-cols-1 md:grid-cols-2 sm:grid-cols-1"
     >
       <RoomCard
         v-for="room in mergeRooms"
@@ -407,7 +386,7 @@ const test = (room: object, time: string) => {
             :key="time"
             :value="time"
             class="bg-[#4992f2] text-white px-4 py-2 rounded-lg transition duration-300 transform hover:bg-[#3e7ac9]"
-            @click="test(room, time)"
+            @click="reserveRoom(room, time)"
           >
             RESERVE
           </button>

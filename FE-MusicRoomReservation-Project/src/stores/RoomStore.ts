@@ -4,7 +4,7 @@ import { fetchData } from "@/fetchUtils/fetch";
 export const useRoomStore = defineStore("RoomStore", {
   state: () => ({
     rooms: [] as Room[],
-    selectedRoom: {} as RoomAndTime | {},
+    bookedRoom: {} as BookedRoom | {},
   }),
 
   getters: {
@@ -23,7 +23,7 @@ export const useRoomStore = defineStore("RoomStore", {
           roomType: room.roomType,
         }));
     },
-    getSelectedRoom: (state) => state.selectedRoom,
+    getBookedRoom: (state) => state.bookedRoom,
   },
 
   actions: {
@@ -35,8 +35,10 @@ export const useRoomStore = defineStore("RoomStore", {
         console.error("Failed to fetch rooms:", error);
       }
     },
-    setSelectedRoom(room: RoomAndTime): void {
-      this.selectedRoom = room;
+    setSelectedRoom(selectedRoom: BookedRoom): void {
+      this.bookedRoom = selectedRoom;
+      console.log("Selected room:", this.bookedRoom);
     },
   },
+  persist: true,
 });
