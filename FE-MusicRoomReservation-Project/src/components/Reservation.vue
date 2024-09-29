@@ -34,9 +34,48 @@ const confirmReservation = () => {
         icon: "success",
         confirmButtonColor: "#4992f2",
       });
+
+      roomStore.reserveRoom({
+        roomId: roomStore.getBookedRoom?.roomId ?? "",
+        time: roomStore.getBookedRoom?.time ?? "",
+        name: name.value,
+        tel: tel.value,
+      });
       router.push({ name: "home" });
     }
   });
+};
+
+const tel = ref(""); // Telephone input
+const telValid = ref(true); // Validity state
+
+const name = ref(""); // Name input
+
+const validateTel = (e: any) => {
+  if (e.inputType === "deleteContentBackward") {
+    if (tel.value.endsWith("-")) {
+      tel.value = tel.value.slice(0, -1);
+    }
+  }
+  if (e.inputType === "insertText" && /^\d$/.test(e.data)) {
+    if (tel.value.length === 3 || tel.value.length === 8) {
+      tel.value += "-";
+    }
+    tel.value += e.data;
+  } else if (e.inputType === "insertText") {
+    telValid.value = false;
+    return;
+  }
+  telValid.value = !tel.value.match(/^\d{3}-\d{4}-\d{4}$/);
+};
+
+const handleKeyPress = (e: KeyboardEvent) => {
+  const isValidKey = /^\d$/.test(e.key);
+
+  if (!isValidKey) {
+    e.preventDefault();
+    telValid.value = false;
+  }
 };
 </script>
 
@@ -132,30 +171,51 @@ const confirmReservation = () => {
               </div>
             </div>
           </div>
-          <div>
+          <div class="mt-3">
             <label for="name" class="block text-sm font-medium text-gray-700">
               Name
             </label>
             <input
+              maxlength="50"
+              v-model="name"
+              placeholder="Enter your name"
               type="text"
               name="name"
               id="name"
-              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-primary-dark sm:text-sm"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none sm:text-sm"
+              required
             />
           </div>
-          <div>
-            <label for="tel" class="block text-sm font-medium text-gray-700">
-              Tel.
-            </label>
-            <input type="tel" name="tel" id="tel" class="mt-1 block w-full px-3
-            py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none
-            focus:border-primary-dark sm:text-sm"
+          <div class="mt-3">
+            <label for="tel" class="block text-sm font-medium text-gray-700"
+              >Telephone</label
+            >
+            <input
+              type="tel"
+              name="tel"
+              id="tel"
+              v-model="tel"
+              placeholder="090-0000-000"
+              @input="validateTel($event)"
+              @keypress="handleKeyPress($event)"
+              s
+              maxlength="12"
+              :class="[
+                'mt-1 block w-full px-3 py-2 border rounded-md shadow-s focus:outline-none  sm:text-sm border-gray-300',
+              ]"
+            />
           </div>
         </div>
       </div>
       <div class="p-5 flex justify-end items-end border-t">
         <button
           class="bg-[#4992f2] text-white text-sm font-medium px-4 py-2 rounded-lg transition duration-300 transform hover:bg-[#3e7ac9]"
+          :disabled="!telValid || !name"
+          :class="
+            !telValid || !name
+              ? ' bg-gray-300 hover:bg-gray-400 cursor-not-allowed'
+              : 'cursor-pointer'
+          "
           @click="confirmReservation"
         >
           Reserve

@@ -5,8 +5,6 @@ import { RouterView, useRoute } from "vue-router";
 import RoomCard from "@/components/RoomCard.vue";
 import SearchButton from "@/components/SearchButton.vue";
 import { capitalizeAndSpace } from "@/libsUtils";
-// import ReservationPage from "./ReservationPage.vue"; // Removed unused import
-// import { onClickOutside } from "@vueuse/core";
 import router from "@/router";
 
 const roomStore = useRoomStore();
@@ -127,13 +125,15 @@ const clearSelectAndGetAllRooms = () => {
   instrumentOption.value = "Instrument";
 };
 
-const handleSearch = (e: Event) => {
-  const input = (e.target as HTMLInputElement).value.toLowerCase().trim();
+const handleSearch = () => {
+  const input = searchInput.value.toLowerCase();
 
   const mergeRoomBySearch = roomStore.getMergeRooms.filter((room: any) => {
     const roomName = room.name.toLowerCase();
     return roomName.includes(input);
   });
+
+  clearAllFilter();
 
   mergeRooms.value = mergeRoomBySearch; // Assuming mergeRooms is a ref
 };
@@ -264,6 +264,7 @@ const reserveRoom = (room: object, time: string) => {
           <input
             type="text"
             v-model.trim="searchInput"
+            @click="clearAllFilter()"
             @input="handleSearch"
             placeholder="Search room name"
             class="search-input h-9 w-64 px-2 focus:ring-2 focus:ring-primary focus:outline-none rounded-l-md"
@@ -353,8 +354,8 @@ const reserveRoom = (room: object, time: string) => {
       class="section-all-rooms relative -top-1 bg-white rounded-b-lg rounded-e-lg border-[1px] border-black gap-x-5 grid xl:grid-row-1 xl:grid-cols-1 lg:grid-cols-1 md:grid-cols-2 sm:grid-cols-1"
     >
       <RoomCard
-        v-for="room in mergeRooms"
-        :key="room.roomId"
+        v-for="(room, index) in mergeRooms"
+        :key="index"
         :time-slots="timeSlots"
       >
         <template #image>
@@ -381,11 +382,19 @@ const reserveRoom = (room: object, time: string) => {
           >
             {{ time }}
           </div>
+
           <button
             v-for="time in timeSlots"
+            :disabled="roomStore.getRoomReservation[room.roomId]?.time === time"
             :key="time"
             :value="time"
             class="bg-[#4992f2] text-white px-4 py-2 rounded-lg transition duration-300 transform hover:bg-[#3e7ac9]"
+            :class="{
+              'bg-[#4992f2]':
+                roomStore.getRoomReservation[room.roomId]?.time !== time,
+              'bg-gray-300 hover:bg-gray-400 cursor-not-allowed':
+                roomStore.getRoomReservation[room.roomId]?.time === time,
+            }"
             @click="reserveRoom(room, time)"
           >
             RESERVE

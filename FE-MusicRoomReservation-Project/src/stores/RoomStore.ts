@@ -5,6 +5,7 @@ export const useRoomStore = defineStore("RoomStore", {
   state: () => ({
     rooms: [] as Room[],
     bookedRoom: null as BookedRoom | null, // Initialize to null
+    roomReservation: {} as { [key: string]: Reservation }, // Initialize with type
   }),
 
   getters: {
@@ -24,6 +25,7 @@ export const useRoomStore = defineStore("RoomStore", {
         }));
     },
     getBookedRoom: (state) => state.bookedRoom,
+    getRoomReservation: (state) => state.roomReservation,
   },
 
   actions: {
@@ -38,6 +40,19 @@ export const useRoomStore = defineStore("RoomStore", {
     setSelectedRoom(selectedRoom: BookedRoom): void {
       this.bookedRoom = selectedRoom;
       console.log("Selected room:", this.bookedRoom);
+    },
+    reserveRoom(userReserve: Reservation): void {
+      const { roomId } = userReserve;
+
+      if (!this.roomReservation[roomId as keyof typeof this.roomReservation]) {
+        this.roomReservation[roomId] = {
+          roomId: userReserve.roomId,
+          time: userReserve.time,
+          name: userReserve.name,
+          tel: userReserve.tel,
+        };
+        console.log("Room reserved:", this.roomReservation);
+      }
     },
   },
   persist: true,
