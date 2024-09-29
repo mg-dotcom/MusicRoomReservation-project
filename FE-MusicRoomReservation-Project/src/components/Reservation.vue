@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from "vue";
-import { useRoomStore } from "@/stores/roomStore";
+import { useRoomStore } from "../stores/RoomStore";
 import { useRoute, useRouter } from "vue-router";
 import Swal from "sweetalert2";
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { useRoomStore } from "@/stores/roomStore";
+import { useRoomStore } from "@/stores/RoomStore";
 import { RouterView, useRoute } from "vue-router";
 import RoomCard from "@/components/RoomCard.vue";
 import SearchButton from "@/components/SearchButton.vue";
@@ -40,7 +40,7 @@ onMounted(async () => {
 
 const distinctCapacity = computed(() => {
   const uniqueCapacities = new Set();
-  return roomStore.getMergeRooms.filter((room) => {
+  return roomStore.getMergeRooms.filter((room: any) => {
     const capacityStr = `${room.capacity.min}-${room.capacity.max}`;
     return uniqueCapacities.has(capacityStr)
       ? false
@@ -76,7 +76,7 @@ const selectedFilter = (option: object) => {
   }
 };
 
-const fsdf = ref([]);
+// const fsdf = ref([]);
 
 const searchAllFilter = () => {
   let filteredRooms = roomStore.getMergeRooms;
@@ -96,7 +96,7 @@ const searchAllFilter = () => {
     const filterKey = Object.keys(filter)[0];
 
     if (filterKey === "capacity") {
-      filteredRooms = filteredRooms.filter((room) => {
+      filteredRooms = filteredRooms.filter((room: any) => {
         return (
           room.capacity.min >= filter.capacity.min &&
           room.capacity.max <= filter.capacity.max
@@ -130,7 +130,7 @@ const clearSelectAndGetAllRooms = () => {
 const handleSearch = (e: Event) => {
   const input = (e.target as HTMLInputElement).value.toLowerCase().trim();
 
-  const mergeRoomBySearch = roomStore.getMergeRooms.filter((room) => {
+  const mergeRoomBySearch = roomStore.getMergeRooms.filter((room: any) => {
     const roomName = room.name.toLowerCase();
     return roomName.includes(input);
   });

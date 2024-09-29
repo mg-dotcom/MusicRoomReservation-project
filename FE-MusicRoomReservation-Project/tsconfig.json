@@ -8,7 +8,11 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["vite/client"]
+    "baseUrl": "src", // Ensure this points to your src folder
+    "paths": {
+      "@/*": ["*"] // Map the @ alias to the src directory
+    },
+    "types": ["vite/client"] // Include types for Vite
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
 }
