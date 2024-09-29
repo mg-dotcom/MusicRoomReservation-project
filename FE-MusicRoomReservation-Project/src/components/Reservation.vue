@@ -1,6 +1,7 @@
 <template>
   <div
-    class="itbkk-modal-new fixed inset-0 flex items-center justify-center z-10 modal-open"
+    class="itbkk-modal-new fixed inset-0 flex items-center justify-center z-50 modal-open"
+    ref="modal"
   >
     <div class="absolute inset-0 bg-black opacity-50"></div>
     <div
@@ -22,7 +23,10 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted } from "vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
+
+const modal = ref<HTMLElement | null>(null);
 
 onMounted(() => {
   document.body.classList.add("overflow-hidden");
@@ -31,4 +35,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   document.body.classList.remove("overflow-hidden");
 });
+
+
 </script>

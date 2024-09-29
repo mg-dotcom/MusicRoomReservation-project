@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import { useRoomStore } from "@/stores/roomStore";
-import { RouterView } from "vue-router";
+import { RouterView, useRoute } from "vue-router";
 import RoomCard from "@/components/RoomCard.vue";
 import SearchButton from "@/components/SearchButton.vue";
 import { capitalizeAndSpace } from "@/libsUtils.ts";
 // import ReservationPage from "./ReservationPage.vue"; // Removed unused import
 import { onClickOutside } from "@vueuse/core";
+import router from "@/router";
 
 const roomStore = useRoomStore();
 const roomTypes = ref<{ roomType: string; rooms: any }[]>([]);
@@ -24,6 +25,8 @@ const timeSlots = ref<string[]>([
   "12:30 - 14:20",
   "14:30 - 16:20",
 ]);
+
+const route = useRoute();
 
 onMounted(async () => {
   await roomStore.loadRooms();
@@ -149,21 +152,39 @@ onMounted(async () => {
 
 const filterOption = ref<HTMLElement | null>(null);
 const roomList = ref<HTMLElement | null>(null);
+const currentRoomType = ref<HTMLElement | null>(null);
 
 const handleClickOutside = (event: MouseEvent) => {
   // click other event.target to clear filter except filterOption and roomList
   if (
     filterOption.value &&
     roomList.value &&
+    currentRoomType &&
     !filterOption.value.contains(event.target as Node) &&
-    !roomList.value.contains(event.target as Node)
+    !roomList.value.contains(event.target as Node) &&
+    !currentRoomType.value.contains(event.target as Node)
   ) {
     clearAllFilter();
   }
+
+  // if (route.name === "reservation") {
+  //   styleRoomTypes.value = ;
+  // }
 };
 
 onClickOutside(filterOption, handleClickOutside);
 onClickOutside(roomList, handleClickOutside);
+
+const test = (room: object, time: string) => {
+  // roomStore.setSelectedRoom(room, time);
+  // console.log(room, time);
+  const formatObj = {
+    room: room,
+    time: time,
+  };  
+
+  roomStore.setSelectedRoom(formatObj);
+};
 </script>
 
 <template>
@@ -310,7 +331,10 @@ onClickOutside(roomList, handleClickOutside);
       </div>
     </div>
 
-    <div class="section-room-types flex gap-x-3 mt-11 text-xl relative z-0">
+    <div
+      class="section-room-types flex gap-x-3 mt-11 text-xl relative z-0"
+      ref="currentRoomType"
+    >
       <div
         class="all-rooms px-7 py-3 font-semibold rounded-t-lg border-[1px] border-black bg-white relative z-5"
         :class="{
@@ -370,6 +394,24 @@ onClickOutside(roomList, handleClickOutside);
           {{ `${room.capacity.min}-${room.capacity.max} people` }}
         </template>
 
+        <template #timeSlots>
+          <div
+            v-for="time in timeSlots"
+            :key="time"
+            class="bg-[#D7FEF2] p-2 rounded-lg transition duration-300 transform"
+          >
+            {{ time }}
+          </div>
+          <button
+            v-for="time in timeSlots"
+            :key="time"
+            :value="time"
+            class="bg-[#4992f2] text-white px-4 py-2 rounded-lg transition duration-300 transform hover:bg-[#3e7ac9]"
+            @click="test(room, time)"
+          >
+            RESERVE
+          </button>
+        </template>
         <template #details>
           <p class="text-gray-500">
             <span class="font-semibold">Building:</span> {{ room.building }}

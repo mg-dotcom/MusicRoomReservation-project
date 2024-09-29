@@ -2,11 +2,11 @@
 import { defineProps } from "vue";
 import { useRouter } from "vue-router";
 
-const router = useRouter();
+// const router = useRouter();
 
-const props = defineProps<{
-  timeSlots: string[];
-}>();
+// const props = defineProps<{
+//   timeSlots: string[];
+// }>();
 </script>
 
 <template>
@@ -27,21 +27,7 @@ const props = defineProps<{
         </p>
 
         <div class="grid grid-cols-4 gap-3 text-center mt-3">
-          <div
-            v-for="time in props.timeSlots"
-            :key="time"
-            class="bg-[#D7FEF2] p-2 rounded-lg transition duration-300 transform"
-          >
-            {{ time }}
-          </div>
-          <button
-            v-for="time in props.timeSlots"
-            :key="time"
-            class="bg-[#4992f2] text-white px-4 py-2 rounded-lg transition duration-300 transform hover:bg-[#3e7ac9]"
-            @click="router.push({ name: 'reservation' })"
-          >
-            RESERVE
-          </button>
+          <slot name="timeSlots">time slot ...</slot>
         </div>
       </div>
 

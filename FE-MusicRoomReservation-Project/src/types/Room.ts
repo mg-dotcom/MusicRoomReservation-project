@@ -11,3 +11,7 @@ interface Room {
   imageUrl?: string;
   roomType: string;
 }
+
+interface RoomAndTime extends Room {
+  time?: string;
+}
