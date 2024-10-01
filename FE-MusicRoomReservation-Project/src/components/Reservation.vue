@@ -67,31 +67,6 @@ const validateTel = (e: any) => {
     }
     tel.value += e.data;
   }
-  if (e.inputType === "insertFromPaste") {
-    // 10 digits only
-    const digitsOnly = tel.value.replace(/\D/g, "").slice(0, 11);
-
-    if (digitsOnly.length <= 3) {
-      tel.value = digitsOnly;
-    } else if (digitsOnly.length <= 7) {
-      tel.value = `${digitsOnly.slice(0, 3)}-${digitsOnly.slice(3)}`;
-    } else {
-      tel.value = `${digitsOnly.slice(0, 3)}-${digitsOnly.slice(
-        3,
-        7
-      )}-${digitsOnly.slice(7, 11)}`;
-    }
-  }
-};
-
-const handleKeyPress = (e: KeyboardEvent) => {
-  const isValidKey = /^\d$/.test(e.key);
-  if (!isValidKey) {
-    e.preventDefault();
-  }
-};
-
-const formatTel = () => {
   const digitsOnly = tel.value.replace(/\D/g, "").slice(0, 11);
 
   if (digitsOnly.length <= 3) {
@@ -103,6 +78,28 @@ const formatTel = () => {
       3,
       7
     )}-${digitsOnly.slice(7, 11)}`;
+  }
+};
+
+const formatTel = (tel: string) => {
+  const digitsOnly = tel.replace(/\D/g, "").slice(0, 11);
+
+  if (digitsOnly.length <= 3) {
+    return digitsOnly;
+  } else if (digitsOnly.length <= 7) {
+    return `${digitsOnly.slice(0, 3)}-${digitsOnly.slice(3)}`;
+  } else {
+    return `${digitsOnly.slice(0, 3)}-${digitsOnly.slice(
+      3,
+      7
+    )}-${digitsOnly.slice(7, 11)}`;
+  }
+};
+
+const handleKeyPress = (e: KeyboardEvent) => {
+  const isValidKey = /^\d$/.test(e.key);
+  if (!isValidKey) {
+    e.preventDefault();
   }
 };
 </script>
@@ -227,7 +224,7 @@ const formatTel = () => {
               id="tel"
               @input="validateTel"
               @keypress="handleKeyPress"
-              @blur="formatTel"
+              @blur="tel = formatTel(tel)"
               v-model.trim="tel"
               placeholder="090-0000-000"
               maxlength="12"
