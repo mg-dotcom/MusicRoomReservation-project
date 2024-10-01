@@ -156,10 +156,6 @@ const reserveRoom = (room: object, time: string) => {
   roomStore.setSelectedRoom(selectedRoom);
   router.push({ name: "reservation" });
 };
-
-const showRoomList = () => {
-  roomList.value?.scrollIntoView({ behavior: "smooth" });
-};
 </script>
 
 <template>
@@ -260,12 +256,13 @@ const showRoomList = () => {
           <input
             type="text"
             v-model.trim="searchInput"
-            @click="clearAllFilter()"
+            @click="clearAllFilter"
             @input="handleSearch"
             placeholder="Search room name"
             class="search-input h-9 w-64 px-2 focus:ring-2 focus:ring-primary focus:outline-none rounded-l-md"
           />
           <button
+            @click="searchInput = ''"
             class="clear-search-filter absolute right-9 translate-y-1.5 text-slate-300 hover:text-slate-400 hover:bg-slate-100 bg-white p-0.5 rounded-full z-10"
           >
             <svg
@@ -337,7 +334,6 @@ const showRoomList = () => {
         @click="
           () => {
             selectedRoomType(room.roomType);
-            showRoomList();
           }
         "
       >
