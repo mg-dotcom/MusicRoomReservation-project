@@ -6,6 +6,7 @@ import RoomCard from "@/components/RoomCard.vue";
 import SearchButton from "@/components/SearchButton.vue";
 import { capitalizeAndSpace } from "@/libsUtils";
 import router from "@/router";
+import { set } from "@vueuse/core";
 
 const roomStore = useRoomStore();
 const roomTypes = ref<{ roomType: string; rooms: any }[]>([]);
@@ -25,8 +26,10 @@ const timeSlots = ref<string[]>([
 ]);
 
 // const route = useRoute();
-
+const isLoaded = ref(false);
+const isShow = ref(false);
 onMounted(async () => {
+  isLoaded.value = true;
   await roomStore.loadRooms();
 
   roomTypes.value = Object.keys(roomStore.getRooms).map((key) => {
@@ -37,6 +40,10 @@ onMounted(async () => {
   });
   mergeRooms.value = roomStore.getMergeRooms;
   styleRoomTypes.value = "all";
+
+  setTimeout(() => {
+    isLoaded.value = false;
+  }, 3000);
 });
 
 const distinctCapacity = computed(() => {
@@ -355,9 +362,15 @@ const reserveRoom = (room: object, time: string) => {
           No room available
         </p>
       </div>
+      <div v-if="isLoaded">
+        <p class="text-center text-2xl font-semibold p-10 text-primary-dark">
+          Loading...
+        </p>
+      </div>
       <RoomCard
         class="room-card"
         v-for="(room, index) in mergeRooms"
+        v-if="!isLoaded"
         :key="index"
         :time-slots="timeSlots"
       >
