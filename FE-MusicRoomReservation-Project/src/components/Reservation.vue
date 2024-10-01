@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onUnmounted, onMounted, ref } from "vue";
 import { useRoomStore } from "@/stores/RoomStore";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { currentDate } from "@/libsUtils";
 import Swal from "sweetalert2";
 
@@ -14,9 +14,18 @@ const handleEscapeKeyPress = (e: KeyboardEvent) => {
   }
 };
 
+const isShow = ref(false);
+
 onMounted(() => {
+  isShow.value = true;
   window.addEventListener("keydown", handleEscapeKeyPress);
 });
+
+if (useRoute().name === "reservation") {
+  setTimeout(() => {
+    isShow.value = false;
+  }, 20);
+}
 
 onUnmounted(() => {
   window.removeEventListener("keydown", handleEscapeKeyPress);
@@ -105,11 +114,16 @@ const handleKeyPress = (e: KeyboardEvent) => {
 </script>
 
 <template>
-  <div
-    class="reservation-modal fixed inset-0 flex items-center justify-center z-50 modal-open"
-  >
+  <div class="fixed inset-0 flex items-center justify-center z-50 modal-open">
     <div class="absolute inset-0 bg-black opacity-50"></div>
-    <div class="relative w-[900px] bg-white rounded-lg shadow-xl">
+    <div
+      class="relative w-[900px] bg-white rounded-lg shadow-xl reservation-modal"
+      :class="
+        isShow
+          ? 'opacity-0 transition-opacity duration-500 ease-in-out'
+          : 'opacity-100 transition-opacity duration-500 ease-in-out'
+      "
+    >
       <div
         class="flex justify-between items-center p-5 border-b border-gray-200"
       >

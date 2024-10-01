@@ -1,4 +1,8 @@
-<script setup></script>
+<script setup>
+import { currentDayDate } from "@/libsUtils";
+
+// Function to format the date
+</script>
 
 <template>
   <div class="h-28 bg-primary relative flex flex-col justify-center">
@@ -8,7 +12,9 @@
         class="bg-primary text-center p-2 text-shadow-solid shadow-primary-dark"
       >
         <h1 class="text-3xl text-white font-bold">Today's Hours : OPEN</h1>
-        <p class="text-white text-xl font-medium">Wednesdey, 19 june 2024</p>
+        <p class="text-white text-xl font-medium">
+          {{ currentDayDate }}
+        </p>
       </div>
     </div>
     <div class="flex flex-col space-y-3">

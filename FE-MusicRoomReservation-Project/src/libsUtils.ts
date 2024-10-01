@@ -12,4 +12,14 @@ const currentDate = new Date().toLocaleDateString("en-GB", {
   year: "numeric",
 });
 
-export { capitalizeAndSpace, currentDate, localTimeZone };
+const currentDayDate = new Date()
+  .toLocaleDateString("en-GB", {
+    timeZone: localTimeZone,
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  })
+  .replace(" ", ", ");
+
+export { capitalizeAndSpace, currentDate, localTimeZone, currentDayDate };

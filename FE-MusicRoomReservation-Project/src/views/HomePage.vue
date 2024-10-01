@@ -93,6 +93,7 @@ const selectedFilter = (option: object) => {
 };
 
 const searchAllFilter = () => {
+  isShow.value = true;
   let filteredRooms = roomStore.getMergeRooms;
 
   const roomTypeFilter = searchFilterArr.value.find((filter) => {
@@ -126,13 +127,20 @@ const searchAllFilter = () => {
   });
   styleRoomTypes.value = "all";
   mergeRooms.value = filteredRooms;
+  setTimeout(() => {
+    isShow.value = false;
+  }, 500);
 };
 
 const clearAllFilter = () => {
+  isShow.value = true;
   searchFilterArr.value = [];
   styleRoomTypes.value = "all";
   mergeRooms.value = roomStore.getMergeRooms;
   clearSelectAndGetAllRooms();
+  setTimeout(() => {
+    isShow.value = false;
+  }, 500);
 };
 
 const clearSelectAndGetAllRooms = () => {
@@ -142,6 +150,7 @@ const clearSelectAndGetAllRooms = () => {
 };
 
 const handleSearch = () => {
+  isShow.value = true;
   const input = searchInput.value.toLowerCase();
 
   const mergeRoomBySearch = roomStore.getMergeRooms.filter((room: any) => {
@@ -152,6 +161,9 @@ const handleSearch = () => {
   clearAllFilter();
 
   mergeRooms.value = mergeRoomBySearch; // Assuming mergeRooms is a ref
+  setTimeout(() => {
+    isShow.value = false;
+  }, 500);
 };
 
 const mergeRooms = ref<any[]>([]);
