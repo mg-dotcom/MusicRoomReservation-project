@@ -43,7 +43,7 @@ onMounted(async () => {
 
   setTimeout(() => {
     isLoaded.value = false;
-  }, 3000);
+  }, 2300);
 });
 
 const distinctCapacity = computed(() => {
@@ -57,6 +57,7 @@ const distinctCapacity = computed(() => {
 });
 
 const selectedRoomType = (roomType: string) => {
+  isShow.value = true;
   if (roomType === "all") {
     mergeRooms.value = roomStore.getMergeRooms;
     styleRoomTypes.value = "all";
@@ -69,6 +70,10 @@ const selectedRoomType = (roomType: string) => {
     searchFilterArr.value = [];
     clearSelectAndGetAllRooms();
   }
+
+  setTimeout(() => {
+    isShow.value = false;
+  }, 500);
 };
 
 const selectedFilter = (option: object) => {
@@ -371,6 +376,7 @@ const reserveRoom = (room: object, time: string) => {
         class="room-card"
         v-for="(room, index) in mergeRooms"
         v-if="!isLoaded"
+        :class="isShow ? 'opacity-0 transition-opacity duration-200' : ''"
         :key="index"
         :time-slots="timeSlots"
       >
