@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRoomStore } from "@/stores/RoomStore";
 import { RouterView, useRoute } from "vue-router";
 import RoomCard from "@/components/RoomCard.vue";
@@ -28,12 +28,15 @@ const timeSlots = ref<string[]>([
 
 onMounted(async () => {
   await roomStore.loadRooms();
+
   roomTypes.value = Object.keys(roomStore.getRooms).map((key) => {
     return {
       roomType: key,
       rooms: (roomStore.getRooms as Record<string, any>)[key],
     };
   });
+  mergeRooms.value = roomStore.getMergeRooms;
+  styleRoomTypes.value = "all";
 });
 
 const distinctCapacity = computed(() => {
@@ -51,8 +54,11 @@ const selectedRoomType = (roomType: string) => {
     mergeRooms.value = roomStore.getMergeRooms;
     styleRoomTypes.value = "all";
   } else {
-    mergeRooms.value = (roomStore.getRooms as Record<string, any>)[roomType];
+    const rooms = roomStore.getRooms as Record<string, any>;
+
+    mergeRooms.value = rooms[roomType] || [];
     styleRoomTypes.value = roomType;
+
     searchFilterArr.value = [];
     clearSelectAndGetAllRooms();
   }
@@ -73,8 +79,6 @@ const selectedFilter = (option: object) => {
     }
   }
 };
-
-// const fsdf = ref([]);
 
 const searchAllFilter = () => {
   let filteredRooms = roomStore.getMergeRooms;
@@ -140,18 +144,6 @@ const handleSearch = () => {
 
 const mergeRooms = ref<any[]>([]);
 
-onMounted(async () => {
-  await roomStore.loadRooms();
-  roomTypes.value = Object.keys(roomStore.getRooms).map((key) => {
-    return {
-      roomType: key,
-      rooms: roomStore.getRooms[key as keyof typeof roomStore.getRooms],
-    };
-  });
-  mergeRooms.value = roomStore.getMergeRooms;
-  styleRoomTypes.value = "all";
-});
-
 const filterOption = ref<HTMLElement | null>(null);
 const roomList = ref<HTMLElement | null>(null);
 const currentRoomType = ref<HTMLElement | null>(null);
@@ -163,6 +155,10 @@ const reserveRoom = (room: object, time: string) => {
   } as BookedRoom;
   roomStore.setSelectedRoom(selectedRoom);
   router.push({ name: "reservation" });
+};
+
+const showRoomList = () => {
+  roomList.value?.scrollIntoView({ behavior: "smooth" });
 };
 </script>
 
@@ -338,7 +334,12 @@ const reserveRoom = (room: object, time: string) => {
         }"
         v-for="(room, index) in roomTypes"
         :key="index"
-        @click="selectedRoomType(room.roomType)"
+        @click="
+          () => {
+            selectedRoomType(room.roomType);
+            showRoomList();
+          }
+        "
       >
         <h2 class="relative z-10">{{ capitalizeAndSpace(room.roomType) }}</h2>
 
@@ -353,7 +354,13 @@ const reserveRoom = (room: object, time: string) => {
       ref="roomList"
       class="section-all-rooms relative -top-1 bg-white rounded-b-lg rounded-e-lg border-[1px] border-black gap-x-5 grid xl:grid-row-1 xl:grid-cols-1 lg:grid-cols-1 md:grid-cols-2 sm:grid-cols-1"
     >
+      <div v-if="mergeRooms.length === 0">
+        <p class="text-center text-2xl font-semibold p-10 text-primary-dark">
+          No room available
+        </p>
+      </div>
       <RoomCard
+        class="room-card"
         v-for="(room, index) in mergeRooms"
         :key="index"
         :time-slots="timeSlots"

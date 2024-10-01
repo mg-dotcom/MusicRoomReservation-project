@@ -23,7 +23,6 @@ interface Reservation {
   tel: string;
 }
 
-// Define the interface for the room store with an index signature
 interface RoomStore {
-  roomReservation: { [key: string]: Reservation | undefined }; // Index signature
+  roomReservation: { [key: string]: Reservation | undefined };
 }

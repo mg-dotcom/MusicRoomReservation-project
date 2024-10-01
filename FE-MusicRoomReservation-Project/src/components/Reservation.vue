@@ -1,19 +1,25 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { onUnmounted, onMounted, ref } from "vue";
 import { useRoomStore } from "@/stores/RoomStore";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
+import { currentDate } from "@/libsUtils";
 import Swal from "sweetalert2";
 
 const router = useRouter();
 const roomStore = useRoomStore();
 
-const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
+const handleEscapeKeyPress = (e: KeyboardEvent) => {
+  if (e.key === "Escape") {
+    router.push({ name: "home" });
+  }
+};
 
-const currentDate = new Date().toLocaleDateString("en-GB", {
-  timeZone: localTimeZone.value,
-  day: "numeric",
-  month: "long",
-  year: "numeric",
+onMounted(() => {
+  window.addEventListener("keydown", handleEscapeKeyPress);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("keydown", handleEscapeKeyPress);
 });
 
 const confirmReservation = () => {
@@ -47,8 +53,6 @@ const confirmReservation = () => {
 };
 
 const tel = ref(""); // Telephone input
-const telValid = ref(true); // Validity state
-
 const name = ref(""); // Name input
 
 const validateTel = (e: any) => {
@@ -62,19 +66,13 @@ const validateTel = (e: any) => {
       tel.value += "-";
     }
     tel.value += e.data;
-  } else if (e.inputType === "insertText") {
-    telValid.value = false;
-    return;
   }
-  telValid.value = !tel.value.match(/^\d{3}-\d{4}-\d{4}$/);
 };
 
 const handleKeyPress = (e: KeyboardEvent) => {
   const isValidKey = /^\d$/.test(e.key);
-
   if (!isValidKey) {
     e.preventDefault();
-    telValid.value = false;
   }
 };
 </script>
@@ -121,7 +119,9 @@ const handleKeyPress = (e: KeyboardEvent) => {
           />
           <div class="ml-3 booked-room-detail flex flex-col justify-between">
             <div>
-              <div class="flex justify-between">
+              <div
+                class="flex justify-between rounded-xl px-2 mb-2 gradient-bg"
+              >
                 <h4 class="text-lg font-bold">
                   {{ roomStore.getBookedRoom?.name }}
                 </h4>
@@ -173,11 +173,12 @@ const handleKeyPress = (e: KeyboardEvent) => {
           </div>
           <div class="mt-3">
             <label for="name" class="block text-sm font-medium text-gray-700">
-              Name
+              Name <span class="text-red-600">*</span>
             </label>
+
             <input
               maxlength="50"
-              v-model="name"
+              v-model.trim="name"
               placeholder="Enter your name"
               type="text"
               name="name"
@@ -188,17 +189,16 @@ const handleKeyPress = (e: KeyboardEvent) => {
           </div>
           <div class="mt-3">
             <label for="tel" class="block text-sm font-medium text-gray-700"
-              >Telephone</label
+              >Telephone <span class="text-red-600">*</span></label
             >
             <input
               type="tel"
               name="tel"
               id="tel"
-              v-model="tel"
+              @input="validateTel"
+              @keypress="handleKeyPress"
+              v-model.trim="tel"
               placeholder="090-0000-000"
-              @input="validateTel($event)"
-              @keypress="handleKeyPress($event)"
-              s
               maxlength="12"
               :class="[
                 'mt-1 block w-full px-3 py-2 border rounded-md shadow-s focus:outline-none  sm:text-sm border-gray-300',
@@ -210,9 +210,9 @@ const handleKeyPress = (e: KeyboardEvent) => {
       <div class="p-5 flex justify-end items-end border-t">
         <button
           class="bg-[#4992f2] text-white text-sm font-medium px-4 py-2 rounded-lg transition duration-300 transform hover:bg-[#3e7ac9]"
-          :disabled="!telValid || !name"
+          :disabled="name.length === 0 || tel.length === 0"
           :class="
-            !telValid || !name
+            name.length === 0 || tel.length === 0
               ? ' bg-gray-300 hover:bg-gray-400 cursor-not-allowed'
               : 'cursor-pointer'
           "
@@ -224,3 +224,5 @@ const handleKeyPress = (e: KeyboardEvent) => {
     </div>
   </div>
 </template>
+
+<style scoped></style>

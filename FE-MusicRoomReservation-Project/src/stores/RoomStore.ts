@@ -42,16 +42,10 @@ export const useRoomStore = defineStore("RoomStore", {
       console.log("Selected room:", this.bookedRoom);
     },
     reserveRoom(userReserve: Reservation): void {
-      const { roomId } = userReserve;
+      const { roomId, time, name, tel } = userReserve;
 
-      if (!this.roomReservation[roomId as keyof typeof this.roomReservation]) {
-        this.roomReservation[roomId] = {
-          roomId: userReserve.roomId,
-          time: userReserve.time,
-          name: userReserve.name,
-          tel: userReserve.tel,
-        };
-        console.log("Room reserved:", this.roomReservation);
+      if (!this.roomReservation[roomId]) {
+        this.roomReservation[roomId] = { roomId, time, name, tel };
       }
     },
   },
