@@ -379,7 +379,7 @@ const reserveRoom = (room: object, time: string) => {
           No room available
         </p>
       </div>
-      <div v-if="isLoaded">
+      <div v-if="isLoaded || (isShow && mergeRooms.length > 0)">
         <p class="text-center text-2xl font-semibold p-10 text-primary-dark">
           Loading...
         </p>
