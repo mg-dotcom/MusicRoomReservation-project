@@ -6,6 +6,7 @@ import RoomCard from "@/components/RoomCard.vue";
 import SearchButton from "@/components/SearchButton.vue";
 import { capitalizeAndSpace } from "@/libsUtils";
 import router from "@/router";
+import { set } from "@vueuse/core";
 
 const roomStore = useRoomStore();
 const roomTypes = ref<{ roomType: string; rooms: any }[]>([]);
@@ -24,8 +25,10 @@ const timeSlots = ref<string[]>([
   "14:30 - 16:20",
 ]);
 
-// const route = useRoute();
+const isShow = ref(false);
 
+// const route = useRoute();
+const isLoading = ref(true);
 onMounted(async () => {
   await roomStore.loadRooms();
 
@@ -37,6 +40,9 @@ onMounted(async () => {
   });
   mergeRooms.value = roomStore.getMergeRooms;
   styleRoomTypes.value = "all";
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 1000);
 });
 
 const distinctCapacity = computed(() => {
@@ -50,6 +56,8 @@ const distinctCapacity = computed(() => {
 });
 
 const selectedRoomType = (roomType: string) => {
+  isShow.value = true;
+
   if (roomType === "all") {
     mergeRooms.value = roomStore.getMergeRooms;
     styleRoomTypes.value = "all";
@@ -62,6 +70,10 @@ const selectedRoomType = (roomType: string) => {
     searchFilterArr.value = [];
     clearSelectAndGetAllRooms();
   }
+
+  setTimeout(() => {
+    isShow.value = false; // End loading
+  }, 500);
 };
 
 const selectedFilter = (option: object) => {
@@ -81,6 +93,7 @@ const selectedFilter = (option: object) => {
 };
 
 const searchAllFilter = () => {
+  isShow.value = true;
   let filteredRooms = roomStore.getMergeRooms;
 
   const roomTypeFilter = searchFilterArr.value.find((filter) => {
@@ -114,13 +127,22 @@ const searchAllFilter = () => {
   });
   styleRoomTypes.value = "all";
   mergeRooms.value = filteredRooms;
+  setTimeout(() => {
+    isShow.value = false; // End loading
+  }, 500);
 };
 
 const clearAllFilter = () => {
+  isShow.value = true;
   searchFilterArr.value = [];
   styleRoomTypes.value = "all";
+
   mergeRooms.value = roomStore.getMergeRooms;
   clearSelectAndGetAllRooms();
+
+  setTimeout(() => {
+    isShow.value = false; // End loading
+  }, 500);
 };
 
 const clearSelectAndGetAllRooms = () => {
@@ -130,6 +152,7 @@ const clearSelectAndGetAllRooms = () => {
 };
 
 const handleSearch = () => {
+  isShow.value = true;
   const input = searchInput.value.toLowerCase();
 
   const mergeRoomBySearch = roomStore.getMergeRooms.filter((room: any) => {
@@ -140,6 +163,9 @@ const handleSearch = () => {
   clearAllFilter();
 
   mergeRooms.value = mergeRoomBySearch; // Assuming mergeRooms is a ref
+  setTimeout(() => {
+    isShow.value = false; // End loading
+  }, 500);
 };
 
 const mergeRooms = ref<any[]>([]);
@@ -156,14 +182,11 @@ const reserveRoom = (room: object, time: string) => {
   roomStore.setSelectedRoom(selectedRoom);
   router.push({ name: "reservation" });
 };
-
-const showRoomList = () => {
-  roomList.value?.scrollIntoView({ behavior: "smooth" });
-};
 </script>
 
 <template>
   <RouterView />
+
   <div class="w-full px-14 py-11">
     <div class="section-filter">
       <h1 class="text-3xl font-semibold">Room Reservation</h1>
@@ -260,13 +283,18 @@ const showRoomList = () => {
           <input
             type="text"
             v-model.trim="searchInput"
-            @click="clearAllFilter()"
+            @click="clearAllFilter"
             @input="handleSearch"
             placeholder="Search room name"
             class="search-input h-9 w-64 px-2 focus:ring-2 focus:ring-primary focus:outline-none rounded-l-md"
           />
           <button
             class="clear-search-filter absolute right-9 translate-y-1.5 text-slate-300 hover:text-slate-400 hover:bg-slate-100 bg-white p-0.5 rounded-full z-10"
+            @click="
+              {
+                searchInput = '';
+              }
+            "
           >
             <svg
               class="w-4 h-4"
@@ -337,7 +365,6 @@ const showRoomList = () => {
         @click="
           () => {
             selectedRoomType(room.roomType);
-            showRoomList();
           }
         "
       >
@@ -354,14 +381,31 @@ const showRoomList = () => {
       ref="roomList"
       class="section-all-rooms relative -top-1 bg-white rounded-b-lg rounded-e-lg border-[1px] border-black gap-x-5 grid xl:grid-row-1 xl:grid-cols-1 lg:grid-cols-1 md:grid-cols-2 sm:grid-cols-1"
     >
-      <div v-if="mergeRooms.length === 0">
+      <div v-if="isLoading">
+        <p
+          class="text-center text-2xl font-semibold p-10 text-primary-dark"
+          :class="
+            isLoading ? 'opacity-100 transition-opacity ease' : 'opacity-100'
+          "
+        >
+          Loading...
+        </p>
+      </div>
+      <div
+        v-if="mergeRooms.length === 0"
+        :class="
+          isShow ? 'opacity-100 transition-opacity ease-in' : 'opacity-100'
+        "
+      >
         <p class="text-center text-2xl font-semibold p-10 text-primary-dark">
           No room available
         </p>
       </div>
       <RoomCard
+        v-if="isLoading === false"
         class="room-card"
         v-for="(room, index) in mergeRooms"
+        :class="isShow ? 'opacity-0 transition-opacity ease-in' : 'opacity-100'"
         :key="index"
         :time-slots="timeSlots"
       >
@@ -431,5 +475,10 @@ const showRoomList = () => {
 <style scoped>
 .bg-primary {
   background-color: #71dbbb;
+}
+
+.show-fade {
+  transition: opacity 0.5s;
+  opacity: 1;
 }
 </style>
