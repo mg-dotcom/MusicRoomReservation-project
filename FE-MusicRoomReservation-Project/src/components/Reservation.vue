@@ -114,10 +114,12 @@ const handleKeyPress = (e: KeyboardEvent) => {
 </script>
 
 <template>
-  <div class="fixed inset-0 flex items-center justify-center z-50 modal-open">
+  <div
+    class="fixed inset-0 flex items-center justify-center z-50 modal-open p-4 sm:p-0"
+  >
     <div class="absolute inset-0 bg-black opacity-50"></div>
     <div
-      class="relative w-[900px] bg-white rounded-lg shadow-xl reservation-modal"
+      class="relative w-full max-w-4xl h-full xl:scale-90 lg:scale-75 md:scale-75 bg-white rounded-lg shadow-xl reservation-modal overflow-y-auto"
       :class="
         isShow
           ? 'opacity-0 transition-opacity duration-500 ease-in-out'
@@ -149,16 +151,20 @@ const handleKeyPress = (e: KeyboardEvent) => {
         </button>
       </div>
       <div class="p-5">
-        <div class="grid grid-cols-2 gap-5">
+        <div class="grid sm:grid-cols-2 grid-cols-1 sm:gap-5">
+          <!-- Changed to single column on small screens -->
           <div class="booked-room col-span-2">
             <h3 class="text-lg font-bold">Room Detail</h3>
           </div>
           <img
             :src="roomStore.getBookedRoom?.imageUrl"
             :alt="`Room ${roomStore.getBookedRoom?.roomId}: ${roomStore.getBookedRoom?.name}`"
-            class="object-cover rounded-lg"
+            class="object-cover rounded-lg hidden"
+            :class="{ 'sm:block': roomStore.getBookedRoom?.imageUrl }"
           />
-          <div class="ml-3 booked-room-detail flex flex-col justify-between">
+          <div
+            class="sm:ml-3 booked-room-detail flex flex-col justify-between mt-2"
+          >
             <div>
               <div
                 class="flex justify-between rounded-xl px-2 mb-2 gradient-bg"
@@ -196,9 +202,9 @@ const handleKeyPress = (e: KeyboardEvent) => {
               </p>
             </div>
 
-            <hr class="h-px bg-gray-200 border-0 dark:bg-gray-700" />
+            <hr class="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700" />
 
-            <div class="">
+            <div>
               <h4 class="text-lg font-bold">Time</h4>
               <div class="flex justify-between">
                 <p class="text-gray-500">
@@ -212,11 +218,10 @@ const handleKeyPress = (e: KeyboardEvent) => {
               </div>
             </div>
           </div>
-          <div class="mt-3">
-            <label for="name" class="block text-sm font-medium text-gray-700">
+          <div class="mt-3 col-span-2">
+            <label for="name" class="block font-medium text-gray-700">
               Name <span class="text-red-600">*</span>
             </label>
-
             <input
               maxlength="50"
               v-model.trim="name"
@@ -224,12 +229,12 @@ const handleKeyPress = (e: KeyboardEvent) => {
               type="text"
               name="name"
               id="name"
-              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none sm:text-sm"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none"
               required
             />
           </div>
-          <div class="mt-3">
-            <label for="tel" class="block text-sm font-medium text-gray-700"
+          <div class="mt-3 col-span-2">
+            <label for="tel" class="block font-medium text-gray-700"
               >Telephone <span class="text-red-600">*</span></label
             >
             <input
@@ -242,9 +247,7 @@ const handleKeyPress = (e: KeyboardEvent) => {
               v-model.trim="tel"
               placeholder="090-0000-000"
               maxlength="12"
-              :class="[
-                'mt-1 block w-full px-3 py-2 border rounded-md shadow-s focus:outline-none  sm:text-sm border-gray-300',
-              ]"
+              class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none border-gray-300"
             />
           </div>
         </div>
@@ -255,7 +258,7 @@ const handleKeyPress = (e: KeyboardEvent) => {
           :disabled="name.length === 0 || tel.length === 0"
           :class="
             name.length === 0 || tel.length === 0
-              ? ' bg-gray-300 hover:bg-gray-400 cursor-not-allowed'
+              ? 'bg-gray-300 hover:bg-gray-400 cursor-not-allowed'
               : 'cursor-pointer'
           "
           @click="confirmReservation"

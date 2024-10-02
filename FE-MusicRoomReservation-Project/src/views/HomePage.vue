@@ -6,8 +6,6 @@ import RoomCard from "@/components/RoomCard.vue";
 import SearchButton from "@/components/SearchButton.vue";
 import { capitalizeAndSpace } from "@/libsUtils";
 import router from "@/router";
-import { set } from "@vueuse/core";
-
 const roomStore = useRoomStore();
 const roomTypes = ref<{ roomType: string; rooms: any }[]>([]);
 const styleRoomTypes = ref<string>();
@@ -28,6 +26,13 @@ const timeSlots = ref<string[]>([
 // const route = useRoute();
 const isLoaded = ref(false);
 const isShow = ref(false);
+
+const checkWindowSize = () => {
+  if (window.innerWidth > 1024) {
+    showFilter.value = true;
+  }
+};
+
 onMounted(async () => {
   isLoaded.value = true;
   await roomStore.loadRooms();
@@ -44,6 +49,7 @@ onMounted(async () => {
   setTimeout(() => {
     isLoaded.value = false;
   }, 2300);
+  checkWindowSize();
 });
 
 const distinctCapacity = computed(() => {
@@ -195,32 +201,32 @@ const showFilter = ref(false);
 
 <template>
   <RouterView />
-  <div
-    class="filter-room-button lg:hidden flex justify-end p-2 flex-row items-center"
-  >
-    <p class="text-primary text-sm mr-1 font-medium">Filter</p>
-    <button
-      class="text-primary text-xl focus:outline-none"
-      @click="showFilter = !showFilter"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="w-8 hover:text-primary-dark transition hover:bg-green-100 p-1 rounded-full"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M3 4h18M4 8h16M6 12h12M8 16h8"
-        />
-      </svg>
-    </button>
-  </div>
 
   <div class="w-full px-14 py-11">
+    <div class="filter-room-button p-2 flex-row items-center flex justify-end">
+      <div class="bg-white flex rounded-2xl px-2 items-center shadow-sm">
+        <p class="text-black text-sm mr-1 font-medium">Filter</p>
+        <button
+          class="text-primary text-xl focus:outline-none"
+          @click="showFilter = !showFilter"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-8 hover:text-primary-dark transition hover:bg-green-100 p-1 rounded-full"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 4h18M4 8h16M6 12h12M8 16h8"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
     <h1 class="font-semibold text-xl lg:text-2xl text-center sm:text-left">
       Room Reservation
     </h1>
@@ -323,18 +329,18 @@ const showFilter = ref(false);
         </div>
       </div>
     </div>
-    <div class="search-filter relative w-full lg:w-auto mt-4 lg:mt-0">
+    <div class="search-filter relative w-full lg:w-1/2 mt-4 lg:mt-4">
       <input
         type="text"
         v-model.trim="searchInput"
         @click="clearAllFilter"
         @input="handleSearch"
         placeholder="Search room name"
-        class="search-input h-9 w-full lg:w-64 px-2 focus:ring-2 focus:ring-primary focus:outline-none rounded-l-md"
+        class="search-input h-9 w-full px-2 focus:ring-2 focus:ring-primary focus:outline-none rounded-l-md"
       />
       <button
         @click="clearSearch"
-        class="clear-search-filter absolute right-9 translate-y-1.5 text-slate-300 hover:text-slate-400 hover:bg-slate-100 bg-white p-0.5 rounded-full z-10"
+        class="clear-search-filter absolute right-9 lg:right-9 translate-y-1.5 text-slate-300 hover:text-slate-400 hover:bg-slate-100 bg-white p-0.5 rounded-full z-10"
       >
         <svg
           class="w-4 h-4"
@@ -379,7 +385,7 @@ const showFilter = ref(false);
       ref="currentRoomType"
     >
       <div
-        class="all-rooms lg:px-7 lg:py-3 font-semibold rounded-t-lg border-[1px] border-black bg-white relative z-5 w-full sm:w-auto text-lg p-2 lg:text-xl"
+        class="all-rooms lg:px-7 lg:py-3 font-semibold rounded-t-lg border-[1px] border-black bg-white relative z-5 w-full sm:w-auto p-2 text-base lg:text-xl"
         :class="{
           'all-rooms-selected bg-primary pointer-events-none':
             styleRoomTypes === 'all',
@@ -419,7 +425,7 @@ const showFilter = ref(false);
 
     <div
       ref="roomList"
-      class="section-all-rooms relative -top-1 bg-white rounded-b-lg rounded-e-lg border-[1px] border-black gap-x-5 grid grid-cols-1 sm:p-5"
+      class="section-all-rooms relative -top-1 bg-white rounded-b-lg rounded-e-lg border-[1px] border-black gap-x-5 grid grid-cols-1 sm:p-3"
     >
       <div v-if="mergeRooms.length === 0 && !isLoaded">
         <p class="text-center text-2xl font-semibold p-10 text-primary-dark">
@@ -459,7 +465,7 @@ const showFilter = ref(false);
           <div
             v-for="time in timeSlots"
             :key="time"
-            class="bg-[#D7FEF2] px-2 py-1 sm:px-4 sm:py-2 rounded-lg transition duration-300 text-xs sm:text-base transform leading-tight"
+            class="bg-[#D7FEF2] px-3 py-2 sm:px-4 sm:py-2 lg:py-2 rounded-lg transition duration-300 text-xs sm:text-sm lg:text-[0.88rem] transform"
           >
             {{ time }}
           </div>
@@ -469,7 +475,7 @@ const showFilter = ref(false);
             :disabled="roomStore.getRoomReservation[room.roomId]?.time === time"
             :key="time"
             :value="time"
-            class="bg-[#4992f2] text-white p-2 sm:px-4 sm:py-2 rounded-lg flex items-center justify-center transition duration-300 transform hover:bg-[#3e7ac9] text-[0.5rem] font-semibold sm:text-base leading-tight"
+            class="bg-[#4992f2] text-white p-3 sm:px-4 sm:py-2 rounded-lg flex items-center justify-center transition duration-300 transform hover:bg-[#3e7ac9] text-[0.58rem] font-semibold sm:text-xs lg:text-[0.88rem] leading-tight"
             :class="{
               'bg-[#4992f2]':
                 roomStore.getRoomReservation[room.roomId]?.time !== time,
