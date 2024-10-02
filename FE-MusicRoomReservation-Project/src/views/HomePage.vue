@@ -198,7 +198,7 @@ const showFilter = ref(false);
   <div
     class="filter-room-button lg:hidden flex justify-end p-2 flex-row items-center"
   >
-    <p class="text-primary text-sm mr-1">Filter</p>
+    <p class="text-primary text-sm mr-1 font-medium">Filter</p>
     <button
       class="text-primary text-xl focus:outline-none"
       @click="showFilter = !showFilter"
@@ -228,20 +228,19 @@ const showFilter = ref(false);
       :class="{
         'hidden opacity-0 transition-opacity duration-200': !showFilter,
         'block opacity-100 transition-opacity duration-200': showFilter,
-        'sm:block': true,
       }"
     >
       <div class="section-filter">
-        <div class="filter flex flex-col sm:flex-row my-4 justify-between">
-          <div class="flex flex-col text-lg w-full sm:w-auto">
+        <div class="filter flex flex-col lg:flex-row my-4 justify-between">
+          <div class="flex flex-col text-lg w-full lg:w-auto">
             <div
-              class="select-filter flex flex-col sm:flex-row space-y-4 sm:space-x-3 sm:space-y-0 w-full sm:justify-center items-center text-lg lg:text-xl"
+              class="select-filter flex flex-col lg:flex-row space-y-4 lg:space-x-3 lg:space-y-0 w-full lg:justify-center items-center text-lg lg:text-xl"
               ref="filterOption"
             >
-              <div class="filter-room font-medium w-full sm:w-auto">
+              <div class="filter-room font-medium w-full lg:w-auto">
                 <select
                   id="room"
-                  class="p-1 w-full sm:w-auto"
+                  class="p-1 w-full lg:w-auto"
                   v-model="roomOption"
                   @change="selectedFilter(roomOption as object)"
                   :class="{
@@ -261,10 +260,10 @@ const showFilter = ref(false);
                 </select>
               </div>
 
-              <div class="filter-capacity font-medium w-full sm:w-auto">
+              <div class="filter-capacity font-medium w-full lg:w-auto">
                 <select
                   id="capacity"
-                  class="p-1 w-full sm:w-auto"
+                  class="p-1 w-full lg:w-auto"
                   v-model="capacityOption"
                   @change="selectedFilter(capacityOption as object)"
                   :class="{
@@ -286,10 +285,10 @@ const showFilter = ref(false);
                 </select>
               </div>
 
-              <div class="filter-instrument font-medium w-full sm:w-auto">
+              <div class="filter-instrument font-medium w-full lg:w-auto">
                 <select
                   id="instrument"
-                  class="p-1 w-full sm:w-auto"
+                  class="p-1 w-full lg:w-auto"
                   v-model="instrumentOption"
                   @change="selectedFilter(instrumentOption as object)"
                   :class="{
@@ -324,14 +323,14 @@ const showFilter = ref(false);
         </div>
       </div>
     </div>
-    <div class="search-filter relative w-full sm:w-auto mt-4 sm:mt-0">
+    <div class="search-filter relative w-full lg:w-auto mt-4 lg:mt-0">
       <input
         type="text"
         v-model.trim="searchInput"
         @click="clearAllFilter"
         @input="handleSearch"
         placeholder="Search room name"
-        class="search-input h-9 w-full sm:w-64 px-2 focus:ring-2 focus:ring-primary focus:outline-none rounded-l-md"
+        class="search-input h-9 w-full lg:w-64 px-2 focus:ring-2 focus:ring-primary focus:outline-none rounded-l-md"
       />
       <button
         @click="clearSearch"
@@ -380,7 +379,7 @@ const showFilter = ref(false);
       ref="currentRoomType"
     >
       <div
-        class="all-rooms px-7 py-3 font-semibold rounded-t-lg border-[1px] border-black bg-white relative z-5 w-full sm:w-auto"
+        class="all-rooms lg:px-7 lg:py-3 font-semibold rounded-t-lg border-[1px] border-black bg-white relative z-5 w-full sm:w-auto text-lg p-2 lg:text-xl"
         :class="{
           'all-rooms-selected bg-primary pointer-events-none':
             styleRoomTypes === 'all',
@@ -395,7 +394,7 @@ const showFilter = ref(false);
       </div>
 
       <div
-        class="room-types px-5 py-3 font-semibold rounded-t-lg border-[1px] border-black relative bg-white w-full sm:w-auto"
+        class="room-types lg:px-5 lg:py-3 font-semibold rounded-t-lg border-[1px] border-black relative bg-white w-full sm:w-auto text-base p-2 lg:text-xl"
         :class="{
           'room-types-selected bg-primary pointer-events-none':
             styleRoomTypes === room.roomType,
@@ -420,7 +419,7 @@ const showFilter = ref(false);
 
     <div
       ref="roomList"
-      class="section-all-rooms relative -top-1 bg-white rounded-b-lg rounded-e-lg border-[1px] border-black gap-x-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-5"
+      class="section-all-rooms relative -top-1 bg-white rounded-b-lg rounded-e-lg border-[1px] border-black gap-x-5 grid grid-cols-1 sm:p-5"
     >
       <div v-if="mergeRooms.length === 0 && !isLoaded">
         <p class="text-center text-2xl font-semibold p-10 text-primary-dark">
@@ -460,7 +459,7 @@ const showFilter = ref(false);
           <div
             v-for="time in timeSlots"
             :key="time"
-            class="bg-[#D7FEF2] px-2 py-1 sm:px-4 sm:py-2 rounded-lg transition duration-300 text-xs sm:text-base transform"
+            class="bg-[#D7FEF2] px-2 py-1 sm:px-4 sm:py-2 rounded-lg transition duration-300 text-xs sm:text-base transform leading-tight"
           >
             {{ time }}
           </div>
@@ -470,7 +469,7 @@ const showFilter = ref(false);
             :disabled="roomStore.getRoomReservation[room.roomId]?.time === time"
             :key="time"
             :value="time"
-            class="bg-[#4992f2] text-white p-2 sm:px-4 sm:py-2 rounded-lg flex items-center justify-center transition duration-300 transform hover:bg-[#3e7ac9] text-xs sm:text-base leading-tight"
+            class="bg-[#4992f2] text-white p-2 sm:px-4 sm:py-2 rounded-lg flex items-center justify-center transition duration-300 transform hover:bg-[#3e7ac9] text-[0.5rem] font-semibold sm:text-base leading-tight"
             :class="{
               'bg-[#4992f2]':
                 roomStore.getRoomReservation[room.roomId]?.time !== time,
