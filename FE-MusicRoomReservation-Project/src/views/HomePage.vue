@@ -203,16 +203,23 @@ const showFilter = ref(false);
   <RouterView />
 
   <div class="w-full px-14 py-11">
-    <div class="filter-room-button p-2 flex-row items-center flex justify-end">
-      <div class="bg-white flex rounded-2xl px-2 items-center shadow-sm">
-        <p class="text-black text-sm mr-1 font-medium">Filter</p>
+    <h1 class="font-semibold text-xl lg:text-2xl text-center sm:text-left">
+      Room Reservation
+    </h1>
+    <div
+      class="filter-room-button pt-2 flex-row items-center flex justify-start"
+      @click="showFilter = !showFilter"
+    >
+      <div
+        class="bg-white flex rounded-2xl px-2 items-center shadow-sm py-1 hover:bg-primary hover:text-white group duration-300 cursor-pointer w-fit p-1 active:bg-emerald-900 transition-colors active:text-white"
+      >
+        <p class="text-sm mr-1 font-medium group-hover:text-white">Filter</p>
         <button
-          class="text-primary text-xl focus:outline-none"
-          @click="showFilter = !showFilter"
+          class="text-primary text-xl focus:outline-none group-hover:text-white"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="w-8 hover:text-primary-dark transition hover:bg-green-100 p-1 rounded-full"
+            class="w-5"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -227,9 +234,6 @@ const showFilter = ref(false);
         </button>
       </div>
     </div>
-    <h1 class="font-semibold text-xl lg:text-2xl text-center sm:text-left">
-      Room Reservation
-    </h1>
     <div
       :class="{
         'hidden opacity-0 transition-opacity duration-200': !showFilter,
@@ -237,10 +241,10 @@ const showFilter = ref(false);
       }"
     >
       <div class="section-filter">
-        <div class="filter flex flex-col lg:flex-row my-4 justify-between">
-          <div class="flex flex-col text-lg w-full lg:w-auto">
+        <div class="filter flex flex-col lg:flex-row my-4 items-start">
+          <div class="flex flex-col lg:flex-row text-lg">
             <div
-              class="select-filter flex flex-col lg:flex-row space-y-4 lg:space-x-3 lg:space-y-0 w-full lg:justify-center items-center text-lg lg:text-xl"
+              class="select-filter flex flex-col lg:flex-row space-y-4 lg:space-x-3 lg:space-y-0 w-full items-center text-lg lg:text-xl"
               ref="filterOption"
             >
               <div class="filter-room font-medium w-full lg:w-auto">
@@ -316,17 +320,17 @@ const showFilter = ref(false);
                 </select>
               </div>
             </div>
-            <div class="flex mt-4 gap-3">
+            <div class="flex mt-4 gap-3 lg:mt-1 lg:ml-5">
               <SearchButton @click="searchAllFilter" />
-              <div
-                class="my-2 text-sm text-slate-300 hover:text-slate-400 transition cursor-pointer w-fit"
-                @click="clearAllFilter"
-              >
-                Clear All Filter
-              </div>
             </div>
           </div>
         </div>
+      </div>
+      <div
+        class="text-sm text-slate-300 hover:text-slate-400 transition cursor-pointer w-fit"
+        @click="clearAllFilter"
+      >
+        Clear All Filter
       </div>
     </div>
     <div class="search-filter relative w-full lg:w-1/2 mt-4 lg:mt-4">
@@ -360,7 +364,7 @@ const showFilter = ref(false);
       </button>
       <button
         @click="handleSearch"
-        class="search-filter-submit absolute top-0 right-0 h-9 px-2 rounded-r-md rounded-l-none bg-primary text-white hover:bg-primary-dark"
+        class="search-filter-submit absolute top-0 right-0 h-9 px-2 rounded-r-md rounded-l-none bg-primary text-white hover:bg-primary-dark active:bg-emerald-900 z-50 focus:outline-none"
       >
         <svg
           class="w-4 h-4"
@@ -387,7 +391,7 @@ const showFilter = ref(false);
       <div
         class="all-rooms lg:px-7 lg:py-3 font-semibold rounded-t-lg border-[1px] border-black bg-white relative z-5 w-full sm:w-auto p-2 text-base lg:text-xl"
         :class="{
-          'all-rooms-selected bg-primary pointer-events-none':
+          'all-rooms-selected bg-primary pointer-events-none ':
             styleRoomTypes === 'all',
         }"
         @click="selectedRoomType('all')"
@@ -512,6 +516,14 @@ const showFilter = ref(false);
 <style scoped>
 .bg-primary {
   background-color: #71dbbb;
+}
+
+.search-filter-submit:hover {
+  background-color: var(--primary-dark-color); /* Example hover color */
+}
+
+.search-filter-submit:active {
+  background-color: #2c7a5e; /* Example active color */
 }
 
 .transition-opacity {
