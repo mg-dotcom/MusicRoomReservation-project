@@ -364,7 +364,7 @@ const showFilter = ref(false);
       </button>
       <button
         @click="handleSearch"
-        class="search-filter-submit absolute top-0 right-0 h-9 px-2 rounded-r-md rounded-l-none bg-primary text-white hover:bg-primary-dark active:bg-emerald-900 z-50 focus:outline-none"
+        class="search-filter-submit absolute top-0 right-0 h-9 px-2 rounded-r-md rounded-l-none bg-primary text-white hover:bg-primary-dark active:bg-emerald-900 focus:outline-none"
       >
         <svg
           class="w-4 h-4"

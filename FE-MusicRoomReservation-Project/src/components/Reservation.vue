@@ -119,7 +119,7 @@ const handleKeyPress = (e: KeyboardEvent) => {
   >
     <div class="absolute inset-0 bg-black opacity-50"></div>
     <div
-      class="relative w-full max-w-4xl h-full xl:scale-90 lg:scale-75 md:scale-75 bg-white rounded-lg shadow-xl reservation-modal overflow-y-auto"
+      class="relative w-full max-w-4xl xl:scale-90 lg:scale-75 md:scale-75 bg-white rounded-lg shadow-xl reservation-modal overflow-y-auto"
       :class="
         isShow
           ? 'opacity-0 transition-opacity duration-500 ease-in-out'
@@ -218,7 +218,7 @@ const handleKeyPress = (e: KeyboardEvent) => {
               </div>
             </div>
           </div>
-          <div class="mt-3 col-span-2">
+          <div class="col-span-2">
             <label for="name" class="block font-medium text-gray-700">
               Name <span class="text-red-600">*</span>
             </label>
