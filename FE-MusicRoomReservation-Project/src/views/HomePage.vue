@@ -6,7 +6,6 @@ import RoomCard from "@/components/RoomCard.vue";
 import SearchButton from "@/components/SearchButton.vue";
 import { capitalizeAndSpace } from "@/libsUtils";
 import router from "@/router";
-import { set } from "@vueuse/core";
 
 const roomStore = useRoomStore();
 const roomTypes = ref<{ roomType: string; rooms: any }[]>([]);

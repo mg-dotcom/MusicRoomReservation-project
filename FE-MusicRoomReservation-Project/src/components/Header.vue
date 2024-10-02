@@ -5,20 +5,26 @@ import { currentDayDate } from "@/libsUtils";
 </script>
 
 <template>
-  <div class="h-28 bg-primary relative flex flex-col justify-center">
-    <div class="absolute inset-0 flex justify-between items-center px-10">
-      <img src="/logo.png" class="h-20" alt="Company logo" />
+  <div
+    class="bg-primary relative flex flex-col justify-center sm:flex-col sm:h-auto md:justify-center lg:h-28 lg:flex-col lg:justify-center"
+  >
+    <div
+      class="lg:absolute inset-0 flex flex-col py-6 items-center px-10 md:justify-between md:flex-row lg:justify-between"
+    >
+      <img src="/logo.png" class="lg:h-20 h-16 sm:h-16" alt="Company logo" />
       <div
-        class="bg-primary text-center p-2 text-shadow-solid shadow-primary-dark"
+        class="bg-primary text-center p-2 text-shadow-solid shadow-primary-dark sm:mt-3 mt-3"
       >
-        <h1 class="text-3xl text-white font-bold">Today's Hours : OPEN</h1>
-        <p class="text-white text-xl font-medium">
+        <h1 class="lg:text-3xl text-2xl text-white font-bold sm:text-2xl">
+          Today's Hours : OPEN
+        </h1>
+        <p class="text-white lg:text-xl font-medium text-xl">
           {{ currentDayDate }}
         </p>
       </div>
     </div>
-    <div class="flex flex-col space-y-3">
-      <div v-for="n in 5" :key="n" class="w-full h-1 bg-yellow-old"></div>
+    <div class="flex flex-col sm:space-y-1 space-y-1">
+      <div v-for="n in 7" :key="n" class="w-full h-1 bg-yellow-old"></div>
     </div>
   </div>
 </template>
