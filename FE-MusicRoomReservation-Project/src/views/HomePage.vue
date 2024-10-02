@@ -374,7 +374,7 @@ const reserveRoom = (room: object, time: string) => {
       ref="roomList"
       class="section-all-rooms relative -top-1 bg-white rounded-b-lg rounded-e-lg border-[1px] border-black gap-x-5 grid xl:grid-row-1 xl:grid-cols-1 lg:grid-cols-1 md:grid-cols-2 sm:grid-cols-1"
     >
-      <div v-if="mergeRooms.length === 0">
+      <div v-if="mergeRooms.length === 0 && !isLoaded">
         <p class="text-center text-2xl font-semibold p-10 text-primary-dark">
           No room available
         </p>
@@ -458,5 +458,9 @@ const reserveRoom = (room: object, time: string) => {
 <style scoped>
 .bg-primary {
   background-color: #71dbbb;
+}
+
+.transition-opacity {
+  transition: opacity 0.2s ease-in-out;
 }
 </style>
