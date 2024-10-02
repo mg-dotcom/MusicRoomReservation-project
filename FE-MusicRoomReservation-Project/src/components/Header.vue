@@ -6,19 +6,19 @@ import { currentDayDate } from "@/libsUtils";
 
 <template>
   <div
-    class="bg-primary relative flex flex-col justify-center sm:flex-col sm:h-auto md:justify-center lg:h-28 lg:flex-col lg:justify-center"
+    class="bg-primary relative flex flex-col justify-center sm:flex-col sm:h-auto md:justify-center lg:h-32 lg:flex-col lg:justify-center"
   >
     <div
-      class="lg:absolute inset-0 flex flex-col py-6 items-center px-10 md:justify-between md:flex-row lg:justify-between"
+      class="inset-0 flex flex-col py-4 items-center px-10 sm:py-6 md:justify-between md:flex-row lg:justify-between lg:absolute"
     >
-      <img src="/logo.png" class="lg:h-20 h-16 sm:h-16" alt="Company logo" />
+      <img src="/logo.png" class="h-16 sm:h-16 lg:h-20" alt="Company logo" />
       <div
         class="bg-primary text-center p-2 text-shadow-solid shadow-primary-dark sm:mt-3 mt-3"
       >
         <h1 class="lg:text-3xl text-2xl text-white font-bold sm:text-2xl">
           Today's Hours : OPEN
         </h1>
-        <p class="text-white lg:text-xl font-medium text-xl">
+        <p class="text-white font-medium text-lg lg:text-xl">
           {{ currentDayDate }}
         </p>
       </div>

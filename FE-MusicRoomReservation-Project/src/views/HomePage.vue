@@ -6,6 +6,7 @@ import RoomCard from "@/components/RoomCard.vue";
 import SearchButton from "@/components/SearchButton.vue";
 import { capitalizeAndSpace } from "@/libsUtils";
 import router from "@/router";
+import { set } from "@vueuse/core";
 
 const roomStore = useRoomStore();
 const roomTypes = ref<{ roomType: string; rooms: any }[]>([]);
@@ -165,6 +166,15 @@ const handleSearch = () => {
   }, 500);
 };
 
+const clearSearch = () => {
+  isShow.value = true;
+  searchInput.value = "";
+  mergeRooms.value = roomStore.getMergeRooms;
+  setTimeout(() => {
+    isShow.value = false;
+  }, 500);
+};
+
 const mergeRooms = ref<any[]>([]);
 
 const filterOption = ref<HTMLElement | null>(null);
@@ -179,167 +189,205 @@ const reserveRoom = (room: object, time: string) => {
   roomStore.setSelectedRoom(selectedRoom);
   router.push({ name: "reservation" });
 };
+
+const showFilter = ref(false);
 </script>
 
 <template>
   <RouterView />
+  <div
+    class="filter-room-button lg:hidden flex justify-end p-2 flex-row items-center"
+  >
+    <p class="text-primary text-sm mr-1">Filter</p>
+    <button
+      class="text-primary text-xl focus:outline-none"
+      @click="showFilter = !showFilter"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-8 hover:text-primary-dark transition hover:bg-green-100 p-1 rounded-full"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M3 4h18M4 8h16M6 12h12M8 16h8"
+        />
+      </svg>
+    </button>
+  </div>
+
   <div class="w-full px-14 py-11">
-    <div class="section-filter">
-      <h1 class="text-3xl font-semibold">Room Reservation</h1>
-      <div class="filter flex my-4 justify-between">
-        <div class="flex flex-col text-lg">
-          <div
-            class="select-filter flex space-x-3 w-full justify-center items-center"
-            ref="filterOption"
-          >
-            <div class="filter-room font-medium">
-              <select
-                id="room"
-                class="p-1"
-                v-model="roomOption"
-                @change="selectedFilter(roomOption as object)"
-                :class="{
-                  'border-primary':
-                    searchFilterArr.filter((filter: any) => filter === roomOption)
-                      .length > 0,
-                }"
-              >
-                <option value="Room" disabled selected hidden>Room</option>
-                <option
-                  v-for="(room, index) in roomTypes"
-                  :value="{ roomType: room.roomType }"
-                  :key="index"
-                >
-                  {{ capitalizeAndSpace(room.roomType) }}
-                </option>
-              </select>
-            </div>
-
-            <div class="filter-capacity font-medium">
-              <select
-                id="capacity"
-                class="p-1"
-                v-model="capacityOption"
-                @change="selectedFilter(capacityOption as object)"
-                :class="{
-                  'border-primary':
-                    searchFilterArr.filter(
-                      (filter: any) => filter === capacityOption
-                    ).length > 0,
-                }"
-              >
-                <option value="Capacity" disabled selected hidden>
-                  Capacity
-                </option>
-
-                <option
-                  v-for="(room, index) in distinctCapacity"
-                  :value="{ capacity: room.capacity }"
-                  :key="index"
-                >
-                  {{ `${room.capacity.min}-${room.capacity.max} people` }}
-                </option>
-              </select>
-            </div>
-            <div class="filter-instrument font-medium">
-              <select
-                id="instrument"
-                class="p-1"
-                v-model="instrumentOption"
-                @change="selectedFilter(instrumentOption as object)"
-                :class="{
-                  'border-primary':
-                    searchFilterArr.filter(
-                      (filter: any) => filter === instrumentOption
-                    ).length > 0,
-                }"
-              >
-                <option value="Instrument" disabled selected hidden>
-                  Instrument
-                </option>
-                <option
-                  v-for="(room, index) in roomStore.getMergeRooms"
-                  :value="{ instruments: room.instruments }"
-                  :key="index"
-                >
-                  {{ room.instruments.join(", ") }}
-                </option>
-              </select>
-            </div>
-            <SearchButton @click="searchAllFilter" />
-          </div>
-          <div
-            class="my-2 text-sm text-slate-300 hover:text-slate-400 transition cursor-pointer w-fit"
-            @click="clearAllFilter"
-          >
-            Clear All Filter
-          </div>
-        </div>
-        <div class="search-filter relative">
-          <input
-            type="text"
-            v-model.trim="searchInput"
-            @click="clearAllFilter"
-            @input="handleSearch"
-            placeholder="Search room name"
-            class="search-input h-9 w-64 px-2 focus:ring-2 focus:ring-primary focus:outline-none rounded-l-md"
-          />
-          <button
-            @click="searchInput = ''"
-            class="clear-search-filter absolute right-9 translate-y-1.5 text-slate-300 hover:text-slate-400 hover:bg-slate-100 bg-white p-0.5 rounded-full z-10"
-          >
-            <svg
-              class="w-4 h-4"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+    <h1 class="font-semibold text-xl lg:text-2xl text-center sm:text-left">
+      Room Reservation
+    </h1>
+    <div
+      :class="{
+        'hidden opacity-0 transition-opacity duration-200': !showFilter,
+        'block opacity-100 transition-opacity duration-200': showFilter,
+        'sm:block': true,
+      }"
+    >
+      <div class="section-filter">
+        <div class="filter flex flex-col sm:flex-row my-4 justify-between">
+          <div class="flex flex-col text-lg w-full sm:w-auto">
+            <div
+              class="select-filter flex flex-col sm:flex-row space-y-4 sm:space-x-3 sm:space-y-0 w-full sm:justify-center items-center text-lg lg:text-xl"
+              ref="filterOption"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-          <button
-            class="search-filter-submit absolute top-0 right-0 h-9 px-2 rounded-r-md rounded-l-none bg-primary text-white hover:bg-primary-dark"
-          >
-            <svg
-              class="w-4 h-4"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 20 20"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-              />
-            </svg>
-          </button>
+              <div class="filter-room font-medium w-full sm:w-auto">
+                <select
+                  id="room"
+                  class="p-1 w-full sm:w-auto"
+                  v-model="roomOption"
+                  @change="selectedFilter(roomOption as object)"
+                  :class="{
+            'border-primary': searchFilterArr.filter(
+              (filter: any) => filter === roomOption
+            ).length > 0,
+          }"
+                >
+                  <option value="Room" disabled selected hidden>Room</option>
+                  <option
+                    v-for="(room, index) in roomTypes"
+                    :value="{ roomType: room.roomType }"
+                    :key="index"
+                  >
+                    {{ capitalizeAndSpace(room.roomType) }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="filter-capacity font-medium w-full sm:w-auto">
+                <select
+                  id="capacity"
+                  class="p-1 w-full sm:w-auto"
+                  v-model="capacityOption"
+                  @change="selectedFilter(capacityOption as object)"
+                  :class="{
+            'border-primary': searchFilterArr.filter(
+              (filter: any) => filter === capacityOption
+            ).length > 0,
+          }"
+                >
+                  <option value="Capacity" disabled selected hidden>
+                    Capacity
+                  </option>
+                  <option
+                    v-for="(room, index) in distinctCapacity"
+                    :value="{ capacity: room.capacity }"
+                    :key="index"
+                  >
+                    {{ `${room.capacity.min}-${room.capacity.max} people` }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="filter-instrument font-medium w-full sm:w-auto">
+                <select
+                  id="instrument"
+                  class="p-1 w-full sm:w-auto"
+                  v-model="instrumentOption"
+                  @change="selectedFilter(instrumentOption as object)"
+                  :class="{
+            'border-primary': searchFilterArr.filter(
+              (filter: any) => filter === instrumentOption
+            ).length > 0,
+          }"
+                >
+                  <option value="Instrument" disabled selected hidden>
+                    Instrument
+                  </option>
+                  <option
+                    v-for="(room, index) in roomStore.getMergeRooms"
+                    :value="{ instruments: room.instruments }"
+                    :key="index"
+                  >
+                    {{ room.instruments.join(", ") }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="flex mt-4 gap-3">
+              <SearchButton @click="searchAllFilter" />
+              <div
+                class="my-2 text-sm text-slate-300 hover:text-slate-400 transition cursor-pointer w-fit"
+                @click="clearAllFilter"
+              >
+                Clear All Filter
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+    <div class="search-filter relative w-full sm:w-auto mt-4 sm:mt-0">
+      <input
+        type="text"
+        v-model.trim="searchInput"
+        @click="clearAllFilter"
+        @input="handleSearch"
+        placeholder="Search room name"
+        class="search-input h-9 w-full sm:w-64 px-2 focus:ring-2 focus:ring-primary focus:outline-none rounded-l-md"
+      />
+      <button
+        @click="clearSearch"
+        class="clear-search-filter absolute right-9 translate-y-1.5 text-slate-300 hover:text-slate-400 hover:bg-slate-100 bg-white p-0.5 rounded-full z-10"
+      >
+        <svg
+          class="w-4 h-4"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+      <button
+        @click="handleSearch"
+        class="search-filter-submit absolute top-0 right-0 h-9 px-2 rounded-r-md rounded-l-none bg-primary text-white hover:bg-primary-dark"
+      >
+        <svg
+          class="w-4 h-4"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 20 20"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+          />
+        </svg>
+      </button>
+    </div>
 
     <div
-      class="section-room-types flex gap-x-3 mt-11 text-xl relative z-0"
+      class="section-room-types flex flex-col sm:flex-row gap-x-3 gap-y-2 sm:gap-y-0 mt-11 text-xl relative z-0"
       ref="currentRoomType"
     >
       <div
-        class="all-rooms px-7 py-3 font-semibold rounded-t-lg border-[1px] border-black bg-white relative z-5"
+        class="all-rooms px-7 py-3 font-semibold rounded-t-lg border-[1px] border-black bg-white relative z-5 w-full sm:w-auto"
         :class="{
           'all-rooms-selected bg-primary pointer-events-none':
             styleRoomTypes === 'all',
         }"
         @click="selectedRoomType('all')"
       >
-        <h2 class="relative z-10">All Rooms</h2>
+        <h2 class="relative z-10 text-center sm:text-left">All Rooms</h2>
         <div
           v-if="styleRoomTypes === 'all'"
           class="bg-white w-full h-[84%] absolute bottom-0 left-0"
@@ -347,7 +395,7 @@ const reserveRoom = (room: object, time: string) => {
       </div>
 
       <div
-        class="room-types px-5 py-3 font-semibold rounded-t-lg border-[1px] border-black relative bg-white"
+        class="room-types px-5 py-3 font-semibold rounded-t-lg border-[1px] border-black relative bg-white w-full sm:w-auto"
         :class="{
           'room-types-selected bg-primary pointer-events-none':
             styleRoomTypes === room.roomType,
@@ -360,8 +408,9 @@ const reserveRoom = (room: object, time: string) => {
           }
         "
       >
-        <h2 class="relative z-10">{{ capitalizeAndSpace(room.roomType) }}</h2>
-
+        <h2 class="relative z-10 text-center sm:text-left">
+          {{ capitalizeAndSpace(room.roomType) }}
+        </h2>
         <div
           v-if="styleRoomTypes === room.roomType"
           class="bg-white w-full h-[84%] absolute bottom-0 left-0"
@@ -371,7 +420,7 @@ const reserveRoom = (room: object, time: string) => {
 
     <div
       ref="roomList"
-      class="section-all-rooms relative -top-1 bg-white rounded-b-lg rounded-e-lg border-[1px] border-black gap-x-5 grid xl:grid-row-1 xl:grid-cols-1 lg:grid-cols-1 md:grid-cols-2 sm:grid-cols-1"
+      class="section-all-rooms relative -top-1 bg-white rounded-b-lg rounded-e-lg border-[1px] border-black gap-x-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-5"
     >
       <div v-if="mergeRooms.length === 0 && !isLoaded">
         <p class="text-center text-2xl font-semibold p-10 text-primary-dark">
@@ -395,7 +444,7 @@ const reserveRoom = (room: object, time: string) => {
           <img
             :src="room.imageUrl"
             :alt="`Room ${room.roomId}: ${room.name}`"
-            class="h-56 w-96 rounded-lg object-cover col-span-2"
+            class="h-56 w-full sm:w-96 rounded-lg object-cover col-span-2"
           />
         </template>
 
@@ -411,7 +460,7 @@ const reserveRoom = (room: object, time: string) => {
           <div
             v-for="time in timeSlots"
             :key="time"
-            class="bg-[#D7FEF2] p-2 rounded-lg transition duration-300 transform"
+            class="bg-[#D7FEF2] px-2 py-1 sm:px-4 sm:py-2 rounded-lg transition duration-300 text-xs sm:text-base transform"
           >
             {{ time }}
           </div>
@@ -421,7 +470,7 @@ const reserveRoom = (room: object, time: string) => {
             :disabled="roomStore.getRoomReservation[room.roomId]?.time === time"
             :key="time"
             :value="time"
-            class="bg-[#4992f2] text-white px-4 py-2 rounded-lg transition duration-300 transform hover:bg-[#3e7ac9]"
+            class="bg-[#4992f2] text-white p-2 sm:px-4 sm:py-2 rounded-lg flex items-center justify-center transition duration-300 transform hover:bg-[#3e7ac9] text-xs sm:text-base leading-tight"
             :class="{
               'bg-[#4992f2]':
                 roomStore.getRoomReservation[room.roomId]?.time !== time,
@@ -433,6 +482,7 @@ const reserveRoom = (room: object, time: string) => {
             RESERVE
           </button>
         </template>
+
         <template #details>
           <p class="text-gray-500">
             <span class="font-semibold">Building:</span> {{ room.building }}
