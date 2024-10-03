@@ -1,11 +1,13 @@
 import { defineStore } from "pinia";
 import { fetchData } from "@/fetchUtils/fetch";
+import Swal from "sweetalert2";
+const apiUrl = import.meta.env.VITE_BASE_URL as string;
 
 export const useRoomStore = defineStore("RoomStore", {
   state: () => ({
     rooms: [] as Room[],
     bookedRoom: null as BookedRoom | null, // Initialize to null
-    roomReservation: {} as { [key: string]: Reservation }, // Initialize with type
+    roomReservation: {} as { [roomId: string]: Reservation[] }, // Initialize with type
   }),
 
   getters: {
@@ -31,7 +33,7 @@ export const useRoomStore = defineStore("RoomStore", {
   actions: {
     async loadRooms(): Promise<void> {
       try {
-        const data: Room[] = await fetchData("http://localhost:8080/roomTypes");
+        const data: Room[] = await fetchData(`${apiUrl}/roomTypes`);
         this.rooms = data;
       } catch (error) {
         console.error("Failed to fetch rooms:", error);
@@ -39,14 +41,31 @@ export const useRoomStore = defineStore("RoomStore", {
     },
     setSelectedRoom(selectedRoom: BookedRoom): void {
       this.bookedRoom = selectedRoom;
-      console.log("Selected room:", this.bookedRoom);
     },
-    reserveRoom(userReserve: Reservation): void {
+    reserveRoom(userReserve: Reservation & { roomId: string }): void {
       const { roomId, time, name, tel } = userReserve;
 
       if (!this.roomReservation[roomId]) {
-        this.roomReservation[roomId] = { roomId, time, name, tel };
+        this.roomReservation[roomId] = [];
       }
+
+      const existingReservation = this.roomReservation[roomId].find(
+        (reservation) => reservation.time === time
+      );
+
+      if (!existingReservation) {
+        this.roomReservation[roomId].push({ time, name, tel });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: `Time ${time} is already reserved for room ${roomId}.`,
+        });
+      }
+    },
+
+    getReservations(roomId: string): Reservation[] {
+      return this.roomReservation[roomId] || [];
     },
   },
   persist: true,

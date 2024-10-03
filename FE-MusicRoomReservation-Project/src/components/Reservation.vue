@@ -49,6 +49,12 @@ const confirmReservation = () => {
         icon: "success",
         confirmButtonColor: "#4992f2",
       });
+      console.log({
+        roomId: roomStore.getBookedRoom?.roomId ?? "",
+        time: roomStore.getBookedRoom?.time ?? "",
+        name: name.value,
+        tel: tel.value,
+      });
 
       roomStore.reserveRoom({
         roomId: roomStore.getBookedRoom?.roomId ?? "",

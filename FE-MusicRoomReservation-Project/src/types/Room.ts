@@ -17,12 +17,11 @@ interface BookedRoom extends Room {
 }
 
 interface Reservation {
-  roomId: string;
   time: string;
   name: string;
   tel: string;
 }
 
 interface RoomStore {
-  roomReservation: { [key: string]: Reservation | undefined };
+  roomReservation: { [roomId: string]: Reservation[] }; // Changed to an array of reservations
 }

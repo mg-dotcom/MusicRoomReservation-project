@@ -197,6 +197,12 @@ const reserveRoom = (room: object, time: string) => {
 };
 
 const showFilter = ref(false);
+
+const isReserve = (roomId: string, time: string) => {
+  return roomStore.getReservations(roomId).some((reservation) => {
+    return reservation.time === time;
+  });
+};
 </script>
 
 <template>
@@ -473,18 +479,20 @@ const showFilter = ref(false);
           >
             {{ time }}
           </div>
-
           <button
             v-for="time in timeSlots"
-            :disabled="roomStore.getRoomReservation[room.roomId]?.time === time"
+            :disabled="
+              isReserve(room.roomId, time) ||
+            "
             :key="time"
             :value="time"
             class="bg-[#4992f2] text-white p-3 sm:px-4 sm:py-2 rounded-lg flex items-center justify-center transition duration-300 transform hover:bg-[#3e7ac9] text-[0.58rem] font-semibold sm:text-xs lg:text-[0.88rem] leading-tight"
             :class="{
-              'bg-[#4992f2]':
-                roomStore.getRoomReservation[room.roomId]?.time !== time,
-              'bg-gray-300 hover:bg-gray-400 cursor-not-allowed':
-                roomStore.getRoomReservation[room.roomId]?.time === time,
+              'bg-[#4992f2]': !isReserve(room.roomId, time),
+              'bg-gray-300 hover:bg-gray-400 cursor-not-allowed': isReserve(
+                room.roomId,
+                time
+              ),
             }"
             @click="reserveRoom(room, time)"
           >
