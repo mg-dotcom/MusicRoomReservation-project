@@ -482,7 +482,7 @@ const isReserve = (roomId: string, time: string) => {
           <button
             v-for="time in timeSlots"
             :disabled="
-              isReserve(room.roomId, time) ||
+              isReserve(room.roomId, time) 
             "
             :key="time"
             :value="time"
