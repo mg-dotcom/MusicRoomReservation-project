@@ -74,7 +74,6 @@ const validateTel = (e: any) => {
     if (tel.value.length === 3 || tel.value.length === 8) {
       tel.value += "-";
     }
-    tel.value += e.data;
   }
   const digitsOnly = tel.value.replace(/\D/g, "").slice(0, 11);
 
@@ -119,7 +118,7 @@ const handleKeyPress = (e: KeyboardEvent) => {
   >
     <div class="absolute inset-0 bg-black opacity-50"></div>
     <div
-      class="relative w-full max-w-4xl sm:scale-90 xl:scale-90 lg:scale-75 md:scale-75 bg-white rounded-lg shadow-xl reservation-modal overflow-y-auto"
+      class="relative w-full max-w-4xl sm:scale-90 xl:scale-90 lg:scale-75 md:scale-75 bg-white rounded-lg shadow-xl reservation-modal"
       :class="
         isShow
           ? 'opacity-0 transition-opacity duration-500 ease-in-out'
@@ -252,7 +251,7 @@ const handleKeyPress = (e: KeyboardEvent) => {
           </div>
         </div>
       </div>
-      <div class="p-5 flex justify-end items-end border-t">
+      <div class="p-4 flex justify-end items-end border-t">
         <button
           class="bg-[#4992f2] text-white text-sm font-medium px-4 py-2 rounded-lg transition duration-300 transform hover:bg-[#3e7ac9]"
           :disabled="name.length === 0 || tel.length === 0"
