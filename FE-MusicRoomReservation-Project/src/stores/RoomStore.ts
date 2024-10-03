@@ -34,6 +34,8 @@ export const useRoomStore = defineStore("RoomStore", {
     async loadRooms(): Promise<void> {
       try {
         const data: Room[] = await fetchData(`${apiUrl}/roomTypes`);
+        console.log("Fetched rooms:", data);
+
         this.rooms = data;
       } catch (error) {
         console.error("Failed to fetch rooms:", error);

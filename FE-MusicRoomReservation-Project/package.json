@@ -5,8 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
+    "build": "npm run generate-html && vite build",
+    "generate-html": "mkdir -p dist && cp index.html dist/",
+    "lint": "eslint . --ext js, jsx --report-unused-disable-directives --max-warnings 0",
+    "copy-index": "cp index.html dist/",
     "preview": "vite preview",
+    "install-deps": "npm install --legacy-peer-deps",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force"
   },
