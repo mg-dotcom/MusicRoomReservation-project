@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { fetchData } from "@/fetchUtils/fetch";
 import Swal from "sweetalert2";
-const apiUrl = import.meta.env.VITE_BASE_URL as string;
+const apiUrl = import.meta.env.VITE_BASE_URL as string; // Removed because process.env is not available in the browser environment
 
 export const useRoomStore = defineStore("RoomStore", {
   state: () => ({
